@@ -38,8 +38,7 @@ class LexEtymasTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('reflexes.langNameEntriesGloss')
-                    ->bulleted()
-                    ->sortable(),
+                    ->bulleted(),
             ])
             ->filters([
                 SelectFilter::make('lexicon')
