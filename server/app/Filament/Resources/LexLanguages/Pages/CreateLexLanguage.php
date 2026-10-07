@@ -5,7 +5,7 @@ namespace App\Filament\Resources\LexLanguages\Pages;
 use App\Filament\Resources\LexLanguages\LexLanguageResource;
 use Filament\Resources\Pages\CreateRecord;
 use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
-use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
+use LaraZeus\SpatieTranslatable\Resources\Pages\CreateRecord\Concerns\Translatable;
 
 class CreateLexLanguage extends CreateRecord
 {
