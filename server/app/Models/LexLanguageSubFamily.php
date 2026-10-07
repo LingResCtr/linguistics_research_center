@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Spatie\Translatable\HasTranslations;
 
 class LexLanguageSubFamily extends Model
 {
-
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_language_sub_family';
@@ -31,7 +32,6 @@ class LexLanguageSubFamily extends Model
 
     public function getFamilySubFamilyAttribute()
     {
-        return strip_tags($this->language_family()->first()->name) . '->' . strip_tags($this->name);
+        return strip_tags($this->language_family()->first()->name).'->'.strip_tags($this->name);
     }
-
 }

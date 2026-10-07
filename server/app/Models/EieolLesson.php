@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EieolLesson extends Model
 {
+    use HasFactory;
 
     protected $table = 'eieol_lesson';
 
-    protected $attributes = array(
-        'lesson_translation' => ' '
-    );
+    protected $attributes = [
+        'lesson_translation' => ' ',
+    ];
 
     protected $guarded = ['id'];
 
@@ -41,11 +43,12 @@ class EieolLesson extends Model
     {
         $langs = collect();
         if ($this->language) {
-            $langs->add((object)['title' => $this->language->language, 'code' => $this->language->lang_attribute]);
+            $langs->add((object) ['title' => $this->language->language, 'code' => $this->language->lang_attribute]);
         }
         foreach ($this->series->languages as $lang) {
-            $langs->add((object)['title' => $lang->display, 'code' => $lang->lang]);
+            $langs->add((object) ['title' => $lang->display, 'code' => $lang->lang]);
         }
+
         return $langs->toArray();
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use IntlChar;
 
 class EieolLanguage extends Model
 {
+    use HasFactory;
 
     protected $table = 'eieol_language';
 
@@ -23,13 +25,13 @@ class EieolLanguage extends Model
                 $unicodeHex = substr($item, 2); // Remove the \u prefix
                 $item = mb_chr(hexdec($unicodeHex), 'UTF-8');
             }
-            $desc = $item . " ::: (";
+            $desc = $item.' ::: (';
             $unicode_names = [];
             foreach (mb_str_split($item) as $char) {
                 $unicode_names[] = IntlChar::charName($char);
             }
-            $desc .= implode(" + ", $unicode_names);
-            $desc .= ")";
+            $desc .= implode(' + ', $unicode_names);
+            $desc .= ')';
             $value[] = [$item, $desc];
         }
 

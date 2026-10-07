@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Spatie\Translatable\HasTranslations;
 
 class LexSemanticCategory extends Model
 {
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_semantic_category';
@@ -29,6 +31,6 @@ class LexSemanticCategory extends Model
 
     public function getLexTextAttribute(): string
     {
-        return $this->lexicon->name . ' - ' . $this->text;
+        return $this->lexicon->name.' - '.$this->text;
     }
 }

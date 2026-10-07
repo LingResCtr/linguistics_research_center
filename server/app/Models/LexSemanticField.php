@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 
 class LexSemanticField extends Model
 {
-
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_semantic_field';
@@ -46,11 +47,11 @@ class LexSemanticField extends Model
 
     public function getLexiconNameTextAttribute(): string
     {
-        return $this->lexicon->name . ': ' . $this->text;
+        return $this->lexicon->name.': '.$this->text;
     }
 
     public function getLexiconNameAbbrTextAttribute(): string
     {
-        return $this->lexicon->name . ': ' . $this->abbr . ', ' . $this->text;
+        return $this->lexicon->name.': '.$this->abbr.', '.$this->text;
     }
 }
