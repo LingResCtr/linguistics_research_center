@@ -1,0 +1,44 @@
+name: Feature request
+description: Propose a new capability or improvement for the fork.
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If this is really about trying an unproven direction rather than a scoped
+        feature, consider the "Experiment proposal" template instead.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What's missing or painful today? Who is affected (public users, scholars, editors, admins)?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What you'd like to see happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: input
+    id: upstream_issue
+    attributes:
+      label: Related upstream issue
+      description: If this tracks or overlaps a cola-laits/linguistics_research_center issue, link it here.
+      placeholder: "cola-laits/linguistics_research_center#NNN"
+  - type: input
+    id: roadmap_item
+    attributes:
+      label: Related roadmap item
+      description: If this fits an item in docs/roadmap.md, name the phase/item.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

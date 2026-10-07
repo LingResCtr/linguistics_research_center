@@ -1,4 +1,7 @@
 .idea
+.DS_Store
 /compose.override.yaml
 /.env
 /.ai
+/data/
+/.claude/settings.local.json

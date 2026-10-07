@@ -10,7 +10,8 @@ services:
       - VIRTUAL_HOST=${VIRTUAL_HOST:-lrc.localhost.utexas.edu}
       - APP_NAME=LRC
       - APP_ENV=local
-      - APP_KEY=base64:MHLjzpUSRe5Y229TnPpokCQXW/a6l9C769NXRxRRJK8=
+      # APP_KEY is set in compose.override.yaml (created by `make init` from
+      # compose.override.yaml.example). Never commit a real key here.
       - APP_DEBUG=true
       - APP_URL=${APP_URL:-https://lrc.localhost.utexas.edu}
       - LOG_CHANNEL=errorlog
@@ -20,7 +21,7 @@ services:
       - DB_DATABASE=lrc
       - DB_USERNAME=lrc
       - DB_PASSWORD=lrc
-      - CACHE_DRIVER=database
+      - CACHE_STORE=database
       - FILESYSTEM_DRIVER=public
       - SESSION_DRIVER=database
       - SESSION_LIFETIME=120

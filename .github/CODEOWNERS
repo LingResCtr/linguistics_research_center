@@ -1,0 +1,32 @@
+# Code owners are requested for review automatically on pull requests.
+# Later entries take precedence. Add teams (@LingResCtr/<team>) as they are created.
+# Ownership map: LRC owns docs, governance, lexicon UI and translations; LAITS owns
+# infrastructure and framework wiring; student contributors own their feature areas
+# by being listed on the specific paths they maintain.
+
+# Default: everything needs at least one LRC reviewer.
+*                                   @dr-danny-law
+
+# Governance and documentation
+/AGENTS.md                          @dr-danny-law
+/CLAUDE.md                          @dr-danny-law
+/CONTRIBUTING.md                    @dr-danny-law
+/SECURITY.md                        @dr-danny-law
+/docs/                              @dr-danny-law
+/.claude/                           @dr-danny-law
+/.github/                           @dr-danny-law
+
+# Infrastructure and deploy (LAITS owner to be added when they join the fork)
+/Dockerfile                         @dr-danny-law
+/compose.yaml                       @dr-danny-law
+/.woodpecker/                       @dr-danny-law
+/server/config/                     @dr-danny-law
+/server/bootstrap/                  @dr-danny-law
+
+# Public lexicon UI and translations (LRC)
+/server/resources/views/lexicon/    @dr-danny-law
+/server/resources/lang/             @dr-danny-law
+/server/app/Http/Controllers/PublicLexiconController.php  @dr-danny-law
+
+# Import commands and their source data
+/server/app/Console/Commands/       @dr-danny-law
