@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    # Start low and raise over time (ADR 0005). The baseline file records pre-existing
+    # findings so that only NEW problems fail `make lint`.
+    level: 2
+    paths:
+        - app
+        - database/seeders
+        - database/factories
+        - routes
+    excludePaths:
+        - app/Console/Commands/import_data
+    # Outside the bind mount: parallel workers hit rename races on Docker Desktop file sharing.
+    tmpDir: /tmp/phpstan
+    reportUnmatchedIgnoredErrors: false
