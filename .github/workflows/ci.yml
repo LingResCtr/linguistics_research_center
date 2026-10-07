@@ -60,16 +60,12 @@ jobs:
   # PHP test suite against a real MariaDB with the production collation. The app relies
   # on MariaDB JSON functions, REGEXP and collation-dependent ordering, so SQLite would
   # pass tests that fail in production. phpunit.xml's <env> values do not override
-  # variables already set in the environment, so the job env below wins.
-  #
-  # continue-on-error: true is TEMPORARY. Only the two stock Laravel example tests exist
-  # and one of them fails on an empty database. The test-baseline PR (ADR 0005 §4)
-  # removes this flag. Do not add continue-on-error to any other job.
+  # variables already set in the environment, so the job env below wins. Blocking
+  # (ADR 0005); do not add continue-on-error to any job.
   # ---------------------------------------------------------------------------------
   php-tests:
     name: PHP tests (MariaDB)
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: server
@@ -136,13 +132,11 @@ jobs:
   # ---------------------------------------------------------------------------------
   # PHP style (Pint) and static analysis (Larastan with the committed baseline).
   # Both are dev dependencies in server/composer.json; configs are server/pint.json and
-  # server/phpstan.neon. Blocking once the style commit from ADR 0005 §4 lands; until
-  # then continue-on-error: true is TEMPORARY.
+  # server/phpstan.neon. Blocking (ADR 0005).
   # ---------------------------------------------------------------------------------
   php-lint:
     name: PHP lint (Pint + Larastan)
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: server

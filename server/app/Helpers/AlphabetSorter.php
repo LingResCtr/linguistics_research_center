@@ -127,6 +127,6 @@ class AlphabetSorter
         }
 
         // if you get here, they are equal, recurse
-        return $this->actual_sorter($a_split['remainder'],$b_split['remainder']);
+        return $this->actual_sorter($a_split['remainder'], $b_split['remainder']);
     }
 }
