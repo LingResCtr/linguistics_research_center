@@ -1,0 +1,34 @@
+# gitleaks configuration for this repository (used by .github/workflows/ci.yml and
+# by `docker run zricethezav/gitleaks detect` locally). Extends the default rules.
+title = "LRC platform"
+
+[extend]
+useDefault = true
+
+# Laravel application keys are base64 and are not matched by the default rules.
+[[rules]]
+id = "laravel-app-key"
+description = "Laravel APP_KEY"
+regex = '''(?i)APP_KEY\s*[=:]\s*["']?base64:[A-Za-z0-9+/]{40,}={0,2}'''
+keywords = ["APP_KEY"]
+
+[rules.allowlist]
+regexes = ['''base64:REPLACE_ME''']
+
+# Vendored libraries were committed to this repository between 2014 and 2021 and later
+# removed. Their test fixtures contain sample keys that are not ours.
+[allowlist]
+description = "Historic vendored libraries, documented placeholders, and known historic findings"
+# Three historic findings already public in upstream's history since 2026-02-24 and
+# recorded for rotation with LAITS (private repo, security/2026-09-16-history-secret-scan.md):
+# 2014 and 2018 Laravel application keys in server/app/config, and the 2021 compose key.
+commits = [
+  "050ea2c3ffeadd7ab39682aa792679220a40dfa4",
+  "a646ba3e39deb9d51bdab86d1789554b93003aff",
+  "1ffca4a4511178c72be394871365fa25be2185a6",
+]
+paths = [
+  '''^server/vendor/''',
+  '''^server/node_modules/''',
+  '''^Documentation/docker\.txt$''',
+]

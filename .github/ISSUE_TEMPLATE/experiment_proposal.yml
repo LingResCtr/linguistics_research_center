@@ -1,0 +1,49 @@
+name: Experiment proposal
+description: Propose opening an exp/<topic> branch to try an unproven direction.
+title: "exp: "
+labels:
+  - experiment
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Experiments live on long-lived `exp/<topic>` branches. Proven directions get
+        sent upstream from an `upstream-pr/<topic>` branch cut from `upstream`; others
+        get dropped without ceremony. See docs/glossary.md ("experiment branch") and
+        the branch model in docs/roadmap.md.
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: What are we trying, and what do we believe will happen?
+    validations:
+      required: true
+  - type: textarea
+    id: keep_or_drop
+    attributes:
+      label: What would make us keep or drop this
+      description: Concrete criteria — performance numbers, user feedback, code-quality outcome, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: affected_areas
+    attributes:
+      label: Affected areas
+      description: Which parts of the app does this touch (models, routes, front end, admin, infra)?
+    validations:
+      required: true
+  - type: dropdown
+    id: upstream_intent
+    attributes:
+      label: Upstream intent
+      description: Is this meant for LAITS eventually, or fork-only?
+      options:
+        - Intended for upstream if it proves out
+        - Fork-only, not intended for upstream
+        - Not sure yet
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

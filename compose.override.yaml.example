@@ -1,0 +1,19 @@
+# Local, machine-specific compose settings. Copy to compose.override.yaml (gitignored).
+# `make init` does this for you and generates a real APP_KEY.
+#
+# Anything secret or personal belongs here, never in compose.yaml.
+services:
+  web:
+    environment:
+      # Generate with: openssl rand -base64 32   (prefix with "base64:")
+      - APP_KEY=base64:REPLACE_ME
+      # Optional:
+      # - SENTRY_LARAVEL_DSN=
+      # - VIRTUAL_HOST=lrc.localhost.utexas.edu
+    # Uncomment to publish a fixed host port instead of a random one:
+    # ports:
+    #   - "8080:80"
+  db:
+    # Uncomment to change the host port for the database (default 13309):
+    # ports:
+    #   - "13309:3306"

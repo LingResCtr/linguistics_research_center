@@ -1,0 +1,242 @@
+name: CI
+
+# Runs on pull requests into master and exp/** and on pushes to master.
+# Uses the `pull_request` trigger (never `pull_request_target`) and needs no repository
+# secrets, so pull requests from forks receive identical checks. See ADR 0005.
+#
+# Jobs are path-filtered by working directory so that, if a second application ever
+# lands beside server/ (ADR 0009), its jobs slot in here rather than in a new workflow.
+on:
+  pull_request:
+    branches:
+      - master
+      - "exp/**"
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PHP_VERSION: "8.5"
+  NODE_VERSION: "24"
+  MARIADB_IMAGE: "mariadb:10.6"
+
+jobs:
+  # ---------------------------------------------------------------------------------
+  # Secret scan with gitleaks, using the repository's .gitleaks.toml (same as
+  # `make secret-scan`). Runs the gitleaks container directly: the marketplace
+  # action needs a paid licence for organisation-owned repositories. Pull requests
+  # scan the commits they add; pushes to master scan the full history. Blocking.
+  # ---------------------------------------------------------------------------------
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$BASE_SHA" ]; then
+            LOG_OPTS="$BASE_SHA..HEAD"
+          else
+            LOG_OPTS="--all"
+          fi
+          docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.21.2 \
+            detect --source=/repo --config=/repo/.gitleaks.toml \
+            --log-opts="$LOG_OPTS" --no-banner --redact --exit-code 1
+
+  # ---------------------------------------------------------------------------------
+  # PHP test suite against a real MariaDB with the production collation. The app relies
+  # on MariaDB JSON functions, REGEXP and collation-dependent ordering, so SQLite would
+  # pass tests that fail in production. phpunit.xml's <env> values do not override
+  # variables already set in the environment, so the job env below wins.
+  #
+  # continue-on-error: true is TEMPORARY. Only the two stock Laravel example tests exist
+  # and one of them fails on an empty database. The test-baseline PR (ADR 0005 §4)
+  # removes this flag. Do not add continue-on-error to any other job.
+  # ---------------------------------------------------------------------------------
+  php-tests:
+    name: PHP tests (MariaDB)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: server
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_DATABASE: lrc_test
+          MARIADB_USER: lrc
+          MARIADB_PASSWORD: lrc
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      DB_CONNECTION: mariadb
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: lrc_test
+      DB_USERNAME: lrc
+      DB_PASSWORD: lrc
+      DB_CHARSET: utf8mb4
+      DB_COLLATION: utf8mb4_unicode_ci
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: dom, intl, libxml, mbstring, pdo_mysql, mysqli, gd, zip, bcmath
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('server/composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict --no-check-publish
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run migrations from scratch
+        run: php artisan migrate --force
+
+      - name: Run test suite
+        run: php artisan test
+
+  # ---------------------------------------------------------------------------------
+  # PHP style (Pint) and static analysis (Larastan with the committed baseline).
+  # Both are dev dependencies in server/composer.json; configs are server/pint.json and
+  # server/phpstan.neon. Blocking once the style commit from ADR 0005 §4 lands; until
+  # then continue-on-error: true is TEMPORARY.
+  # ---------------------------------------------------------------------------------
+  php-lint:
+    name: PHP lint (Pint + Larastan)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: dom, intl, libxml, mbstring, pdo_mysql, gd, zip, bcmath
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('server/composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
+
+      - name: Pint (check only)
+        run: vendor/bin/pint --test
+
+      - name: Larastan
+        run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=github
+
+  # ---------------------------------------------------------------------------------
+  # Frontend build (Vite) after a production Composer install. Blocking.
+  # ---------------------------------------------------------------------------------
+  frontend-build:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # The Filament theme stylesheet imports from vendor/filament, so Composer
+      # dependencies must exist before Vite runs (the Dockerfile does the same).
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: dom, intl, libxml, mbstring, gd, zip, bcmath
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('server/composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Install Composer dependencies (no dev, no scripts)
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+  # ---------------------------------------------------------------------------------
+  # Production image build, no push. Blocking.
+  # ---------------------------------------------------------------------------------
+  docker-build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

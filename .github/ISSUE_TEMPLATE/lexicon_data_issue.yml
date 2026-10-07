@@ -1,0 +1,44 @@
+name: Lexicon data issue
+description: A content error in a dictionary entry (wrong etymon, reflex, gloss, source, etc.), not a code bug.
+title: "data: "
+labels:
+  - lexicon-data
+body:
+  - type: dropdown
+    id: lexicon
+    attributes:
+      label: Lexicon
+      options:
+        - IELEX
+        - SEMITILEX
+        - MAYALEX
+        - DRAVIDILEX
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: entry_url
+    attributes:
+      label: URL of the entry
+      description: The etymon, reflex, or word page where the error appears.
+      placeholder: https://lrc.la.utexas.edu/lexicon/...
+    validations:
+      required: true
+  - type: textarea
+    id: whats_wrong
+    attributes:
+      label: What is wrong
+      description: Be specific — which field, which value, what it should be instead.
+    validations:
+      required: true
+  - type: textarea
+    id: citation
+    attributes:
+      label: Source citation
+      description: The bibliographic source supporting the correction (author, work, page/entry number).
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

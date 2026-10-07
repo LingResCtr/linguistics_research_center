@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Upstream issue tracker (LAITS-operational matters)
+    url: https://github.com/cola-laits/linguistics_research_center/issues
+    about: >-
+      For matters that belong to the upstream maintainer (LAITS) rather than this
+      experimental fork — hosting, deployment, org-wide process, or a feature request
+      that isn't specific to work happening here — please open or comment on the
+      upstream issue tracker instead.
