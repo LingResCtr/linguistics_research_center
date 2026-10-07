@@ -1,0 +1,373 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/GenerateLexiconDataCache.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$semantic_fields\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/GenerateLexiconDataCache.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/GenerateLexiconDataCache.php
+
+		-
+			message: '#^Called ''pluck'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/Console/Commands/GenerateLexiconDataCache.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LexPartOfSpeech\:\:\$lexicon_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ImportProtoSemiticCsv.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\LexSemanticCategory\:\:\$lexicon_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ImportProtoSemiticCsv.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$semantic_category_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ImportProtoSemiticCsv.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\ImportProtoSemiticCsv\:\:handle\(\) should return int but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Console/Commands/ImportProtoSemiticCsv.php
+
+		-
+			message: '#^Variable \$lex_etymon might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: app/Console/Commands/ImportProtoSemiticCsv.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$language_sub_family\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Pages/LexiconUtilities.php
+
+		-
+			message: '#^Called ''pluck'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/Filament/Pages/LexiconUtilities.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getTinyMceCharmapConfig\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Filament/Resources/EieolLessons/Schemas/EieolLessonForm.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/LexLexicons/Pages/DataCacheStatus.php
+
+		-
+			message: '#^Cannot access property \$id on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: app/Filament/Resources/LexLexicons/Pages/DataCacheStatus.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$language_family\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/LexReflexes/Schemas/LexReflexForm.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/LexSemanticFields/Schemas/LexSemanticFieldForm.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/LexSemanticFields/Tables/LexSemanticFieldsTable.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$analysis\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$head_word_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lesson\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$part_of_speech\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolGlossController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lang_attribute\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolLessonController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$language\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolLessonController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$languages\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolLessonController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$display\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolSeriesController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolSeriesController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lang\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/EieolSeriesController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:create\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:destroy\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:edit\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:index\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:show\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\IssueCommentController\:\:update\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/IssueCommentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/IssueController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/IssueController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$languages\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/IssueController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/PublicBookController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/PublicBookController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$glosses\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/PublicEieolController.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\Authenticate\:\:redirectTo\(\) should return string but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Middleware/Authenticate.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EieolGlossedText.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lang_attribute\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EieolLesson.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$language\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EieolLesson.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$languages\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/EieolLesson.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Issue.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Models/Issue.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/LexEtyma.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$language_family\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexLanguage.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexLanguageSubFamily.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$entry\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexReflex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$gloss\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexReflex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$homograph_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexReflex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexReflex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$old_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexReflex.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/LexSemanticCategory.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/LexSemanticField.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/LexSource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lessons\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Providers/Filament/AdminPanelProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$lessons\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Providers/ViewServiceProvider.php

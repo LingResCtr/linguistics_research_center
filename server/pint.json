@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "public",
+        "storage",
+        "bootstrap/cache",
+        "app/Console/Commands/import_data"
+    ]
+}
