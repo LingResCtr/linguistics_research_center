@@ -22,13 +22,17 @@ class LexReflexResource extends Resource
     protected static ?string $model = LexReflex::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChatBubbleLeft;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Reflexes';
+
     protected static ?int $navigationSort = 7;
 
     protected static ?string $recordTitleAttribute = 'gloss';
 
     protected static ?string $pluralModelLabel = 'Reflexes';
+
     protected static ?string $label = 'Reflex';
 
     public static function form(Schema $schema): Schema

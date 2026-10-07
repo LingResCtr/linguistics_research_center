@@ -15,30 +15,30 @@ use Normalizer;
 
 class EieolLessonController extends Controller
 {
-
     public function create(Request $request)
     {
         $series = EieolSeries::findOrFail($request->get('series_id'));
         $languages = EieolLanguage::pluck('language', 'id');
+
         return view('admin.eieol_lesson_create', [
             'series' => $series,
-            'languages' => $languages
+            'languages' => $languages,
         ]);
     }
 
     public function store(Request $request)
     {
         $rules = [
-            'order' => 'required|integer|unique:eieol_lesson,order,null,id,series_id,' . $request->get('series_id'),
-            'title' => 'required|unique:eieol_lesson,title,null,id,series_id,' . $request->get('series_id'),
+            'order' => 'required|integer|unique:eieol_lesson,order,null,id,series_id,'.$request->get('series_id'),
+            'title' => 'required|unique:eieol_lesson,title,null,id,series_id,'.$request->get('series_id'),
             'language' => 'required',
             'intro_text' => 'required',
-            'series_id' => 'required|exists:eieol_series,id'
+            'series_id' => 'required|exists:eieol_series,id',
         ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return redirect('/admin2/eieol_lesson/create?series_id=' . $request->get('series_id'))
+            return redirect('/admin2/eieol_lesson/create?series_id='.$request->get('series_id'))
                 ->withErrors($validator->messages())
                 ->withInput();
         }
@@ -51,8 +51,9 @@ class EieolLessonController extends Controller
             'intro_text' => Normalizer::normalize($request->get('intro_text'), Normalizer::FORM_C),
         ]);
 
-        $request->session()->flash('message', $lesson->title . ' has been created');
-        return redirect('/admin2/eieol_lesson/' . $lesson->id . '/edit');
+        $request->session()->flash('message', $lesson->title.' has been created');
+
+        return redirect('/admin2/eieol_lesson/'.$lesson->id.'/edit');
     }
 
     public function edit($id)
@@ -62,15 +63,15 @@ class EieolLessonController extends Controller
         $glossed_texts = EieolGlossedText::with('glosses.language', 'glosses.elements.head_word.language')
             ->where('lesson_id', '=', $id)->orderBy('order')->get();
 
-        $series_languages = [$lesson->language->lang_attribute . ':' . $lesson->language->language];
+        $series_languages = [$lesson->language->lang_attribute.':'.$lesson->language->language];
         foreach ($lesson->series->languages as $l) {
-            $series_languages[] = $l->lang . ':' . $l->display;
+            $series_languages[] = $l->lang.':'.$l->display;
         }
 
         $etymas = LexEtyma::pluck('entry', 'id');
 
         $related_issues = Issue::where('status', 'open')
-            ->where('pointer', 'like', '/lesson/' . $lesson->id . '%')
+            ->where('pointer', 'like', '/lesson/'.$lesson->id.'%')
             ->get();
 
         return view('admin.eieol_lesson_edit', ['lesson' => $lesson,
@@ -78,24 +79,23 @@ class EieolLessonController extends Controller
             'glossed_texts' => $glossed_texts,
             'etymas' => $etymas,
             'series_languages' => $series_languages,
-            'issues' => $related_issues
+            'issues' => $related_issues,
         ]);
     }
-
 
     public function update(Request $request, $id)
     {
         $rules = [
-            'order' => 'required|integer|unique:eieol_lesson,order,' . $id . ',id,series_id,' . $request->get('series_id'),
-            'title' => 'required|unique:eieol_lesson,title,' . $id . ',id,series_id,' . $request->get('series_id'),
-            'intro_text' => 'required'
+            'order' => 'required|integer|unique:eieol_lesson,order,'.$id.',id,series_id,'.$request->get('series_id'),
+            'title' => 'required|unique:eieol_lesson,title,'.$id.',id,series_id,'.$request->get('series_id'),
+            'intro_text' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -122,7 +122,7 @@ class EieolLessonController extends Controller
 
         return [
             'success' => true,
-            'message' => 'Text was updated successfully'
+            'message' => 'Text was updated successfully',
         ];
     }
 
@@ -135,9 +135,7 @@ class EieolLessonController extends Controller
 
         return [
             'success' => true,
-            'message' => 'Translation was updated successfully'
+            'message' => 'Translation was updated successfully',
         ];
     }
-
-
 }

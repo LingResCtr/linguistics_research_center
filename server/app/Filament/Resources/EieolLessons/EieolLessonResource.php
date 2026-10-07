@@ -11,7 +11,6 @@ use App\Models\EieolLesson;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class EieolLessonResource extends Resource
@@ -19,9 +18,13 @@ class EieolLessonResource extends Resource
     protected static ?string $model = EieolLesson::class;
 
     protected static ?string $navigationLabel = 'Lessons';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-m-chat-bubble-bottom-center-text';
+
     protected static string|null|\UnitEnum $navigationGroup = 'EIEOL';
+
     protected static ?int $navigationSort = 3;
+
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema

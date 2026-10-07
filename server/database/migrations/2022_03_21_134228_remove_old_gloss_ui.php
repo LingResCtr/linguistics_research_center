@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('eieol_series', function(Blueprint $table) {
+        Schema::table('eieol_series', function (Blueprint $table) {
             $table->dropColumn('use_old_gloss_ui');
         });
     }
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('eieol_series', function(Blueprint $table) {
+        Schema::table('eieol_series', function (Blueprint $table) {
             $table->boolean('use_old_gloss_ui')->nullable()->default(1);
         });
     }

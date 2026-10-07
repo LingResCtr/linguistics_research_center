@@ -7,6 +7,7 @@ use App\Models\LexReflex;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+
 use function Laravel\Prompts\progress;
 
 class GenerateLexiconDataCache extends Command
@@ -38,6 +39,7 @@ class GenerateLexiconDataCache extends Command
                 $this->handleLexiconId($lex_id);
             }
         }
+
         return 0;
     }
 
@@ -58,11 +60,12 @@ class GenerateLexiconDataCache extends Command
 
         $lang_options = ['en'];
         if ($lexicon->viewer_lang_options) {
-            $lang_options = str($lexicon->viewer_lang_options)->explode(',')->map(fn($l) => trim($l));
+            $lang_options = str($lexicon->viewer_lang_options)->explode(',')->map(fn ($l) => trim($l));
         }
         $num_reflexes = LexReflex::whereIn('language_id', $lex_language_ids)->count();
         if ($num_reflexes === 0) {
             $this->info("Skipping empty Lexicon '{$lexicon->name}'");
+
             return 0;
         }
         $progress = progress(label: "Updating data cache for Lexicon '{$lexicon->name}'", steps: $num_reflexes);
@@ -72,7 +75,7 @@ class GenerateLexiconDataCache extends Command
         \DB::table('lex_lexicon_data_cache')->where('lexicon_id', $lex_id)->delete();
         $chunkSize = 100;
         LexReflex::whereIn('language_id', $lex_language_ids)
-            ->chunk($chunkSize, function(Collection $reflexes) use ($progress, $lang_options, $lex_id, $column_descs, $chunkSize) {
+            ->chunk($chunkSize, function (Collection $reflexes) use ($progress, $lang_options, $lex_id, $column_descs, $chunkSize) {
                 foreach ($reflexes as $reflex) {
                     foreach ($lang_options as $lang) {
                         $data = [];
@@ -80,20 +83,20 @@ class GenerateLexiconDataCache extends Command
                         foreach ($column_descs as $column_desc) {
                             if ($column_desc->name == 'meaning') {
                                 $data[$column_desc->name] = $reflex->gloss;
-                            } else if ($column_desc->name == 'part_of_speech') {
+                            } elseif ($column_desc->name == 'part_of_speech') {
                                 $data[$column_desc->name] = $reflex->parts_of_speech->pluck('text')->join(', ');
-                            } else if ($column_desc->name == 'semantic_tag') {
+                            } elseif ($column_desc->name == 'semantic_tag') {
                                 $data[$column_desc->name] = $reflex->etyma->flatMap(function ($etymon) {
                                     return $etymon->semantic_fields->pluck('text');
                                 })->join(', ');
-                            } else if ($column_desc->name == 'root') {
+                            } elseif ($column_desc->name == 'root') {
                                 $data[$column_desc->name] = collect($reflex->entries)->pluck('text')->join(', ');
-                            } else if ($column_desc->name == 'etymon') {
+                            } elseif ($column_desc->name == 'etymon') {
                                 $data[$column_desc->name] = $reflex->etyma->pluck('entry')->join(', ');
-                            } else if ($column_desc->name == 'language') {
+                            } elseif ($column_desc->name == 'language') {
                                 $data[$column_desc->name] = $reflex->language->name;
                             } else {
-                                $data[$column_desc->name] = $reflex->extra_data->where('key', $column_desc->name)->first()?->value ?? "";
+                                $data[$column_desc->name] = $reflex->extra_data->where('key', $column_desc->name)->first()?->value ?? '';
                             }
                         }
                         \DB::table('lex_lexicon_data_cache')->insert([
@@ -101,7 +104,7 @@ class GenerateLexiconDataCache extends Command
                             'lexicon_id' => $lex_id,
                             'reflex_id' => $reflex->id,
                             'content_lang_code' => $lang,
-                            'data' => json_encode((object)$data),
+                            'data' => json_encode((object) $data),
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now(),
                         ]);

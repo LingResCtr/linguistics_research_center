@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\LexSemanticFields\Tables;
 
 use App\Models\LexSemanticCategory;
-use App\Models\LexSemanticField;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -47,9 +46,9 @@ class LexSemanticFieldsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                //BulkActionGroup::make([
+                // BulkActionGroup::make([
                 //    DeleteBulkAction::make(),
-                //]),
+                // ]),
             ]);
     }
 }

@@ -11,8 +11,11 @@ class LexReflexCrossReference extends Pivot
     use HasTranslations;
 
     protected $table = 'lex_reflex_cross_reference';
+
     protected $guarded = ['id', 'created_at', 'updated_at'];
+
     protected $translatable = ['relationship'];
+
     public $incrementing = true;
 
     public function to_reflex(): BelongsTo

@@ -3,17 +3,15 @@
 namespace App\Http\Middleware;
 
 use App\Settings\SiteSettings;
-use Carbon\Carbon;
 use Closure;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Request;
 
 class ManageDonationSessionMarker
 {
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)

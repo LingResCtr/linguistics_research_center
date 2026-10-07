@@ -9,28 +9,27 @@ use Normalizer;
 
 class EieolHeadWordController extends Controller
 {
-
     public function store(Request $request)
     {
 
-        $rules = array(
-            //have to put definition in quotes in case it has a comma in it
-            'word' => 'required|regex:/^<.*>$/|unique:eieol_head_word,word,null,id,definition,"' . Normalizer::normalize($request->get('definition'), Normalizer::FORM_C) . '",language_id,' . $request->get('language_id'),
+        $rules = [
+            // have to put definition in quotes in case it has a comma in it
+            'word' => 'required|regex:/^<.*>$/|unique:eieol_head_word,word,null,id,definition,"'.Normalizer::normalize($request->get('definition'), Normalizer::FORM_C).'",language_id,'.$request->get('language_id'),
             'definition' => 'required',
             'keywords' => 'required',
             'language_id' => 'required',
-        );
-        $messages = array(
+        ];
+        $messages = [
             'word.unique' => 'This Word/Definition combination already exists',
-            'word.regex' => 'Word must start with "<" and end with ">"'
-        );
+            'word.regex' => 'Word must start with "<" and end with ">"',
+        ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -51,28 +50,28 @@ class EieolHeadWordController extends Controller
             'success' => true,
             'added' => true,
             'head_word_id' => $head_word->id,
-            'message' => 'Head Word was successfully added.'
+            'message' => 'Head Word was successfully added.',
         ];
     }
 
     public function update(Request $request, $id)
     {
-        $rules = array(
-            //have to put definition in quotes in case it has a comma in it
-            'word' => 'required|regex:/^<.*>$/|unique:eieol_head_word,word,' . $id . ',id,definition,"' . Normalizer::normalize($request->get('definition'), Normalizer::FORM_C) . '",language_id,' . $request->get('language_id'),
+        $rules = [
+            // have to put definition in quotes in case it has a comma in it
+            'word' => 'required|regex:/^<.*>$/|unique:eieol_head_word,word,'.$id.',id,definition,"'.Normalizer::normalize($request->get('definition'), Normalizer::FORM_C).'",language_id,'.$request->get('language_id'),
             'definition' => 'required',
-        );
-        $messages = array(
+        ];
+        $messages = [
             'word.unique' => 'This Word/Definition combination already exists',
-            'word.regex' => 'Word must start with "<" and end with ">"'
-        );
+            'word.regex' => 'Word must start with "<" and end with ">"',
+        ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -96,5 +95,4 @@ class EieolHeadWordController extends Controller
             'head_word_id' => $head_word->id,
         ];
     }
-
 }

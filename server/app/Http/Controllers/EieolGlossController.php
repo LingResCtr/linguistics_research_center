@@ -12,7 +12,6 @@ use Normalizer;
 
 class EieolGlossController extends Controller
 {
-
     public function show($id)
     {
         $gloss = EieolGloss::with('elements.head_word', 'glossed_text.lesson')->find($id);
@@ -21,21 +20,21 @@ class EieolGlossController extends Controller
         $i = 0;
         foreach ($gloss->elements as $element) {
             $i++;
-            $return_gloss['element_' . $i . '_id'] = $element->id;
-            $return_gloss['element_' . $i . '_part_of_speech'] = $element->part_of_speech;
-            $return_gloss['element_' . $i . '_analysis'] = $element->analysis;
-            $return_gloss['element_' . $i . '_head_word_id'] = $element->head_word_id;
-            $return_gloss['element_' . $i . '_order'] = $element->order;
+            $return_gloss['element_'.$i.'_id'] = $element->id;
+            $return_gloss['element_'.$i.'_part_of_speech'] = $element->part_of_speech;
+            $return_gloss['element_'.$i.'_analysis'] = $element->analysis;
+            $return_gloss['element_'.$i.'_head_word_id'] = $element->head_word_id;
+            $return_gloss['element_'.$i.'_order'] = $element->order;
         }
 
-        $lessons = array();
+        $lessons = [];
         $glossed_text = $gloss->glossed_text;
-        if (!in_array($glossed_text->lesson->title, $lessons)) {
+        if (! in_array($glossed_text->lesson->title, $lessons)) {
             $lessons[] = $glossed_text->lesson->title;
         }
         $return_gloss['lessons'] = '';
         foreach ($lessons as $lesson) {
-            $return_gloss['lessons'] .= $lesson . ', ';
+            $return_gloss['lessons'] .= $lesson.', ';
         }
         $return_gloss['lessons'] = rtrim($return_gloss['lessons'], ', ');
 
@@ -82,13 +81,13 @@ class EieolGlossController extends Controller
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
         $gloss_id = DB::transaction(function () use ($request) {
 
             $highest_order = EieolGloss::where('glossed_text_id', $request->get('glossed_text_id'))->max('order');
-            if (!$highest_order) {
+            if (! $highest_order) {
                 $highest_order = 0;
             }
             $highest_order += 10;
@@ -105,27 +104,26 @@ class EieolGlossController extends Controller
 
             $gloss->save();
 
-            //loop through element elements
+            // loop through element elements
             for ($i = 1; $i <= 6; $i++) {
-                //store elements
-                if ($request->get('element_' . $i . '_part_of_speech')) {
+                // store elements
+                if ($request->get('element_'.$i.'_part_of_speech')) {
                     $element = new EieolElement;
 
                     $element->gloss_id = $gloss->id;
-                    $element->part_of_speech = $request->get('element_' . $i . '_part_of_speech');
-                    $element->analysis = $request->get('element_' . $i . '_analysis');
-                    $element->head_word_id = $request->get('element_' . $i . '_head_word_id');
+                    $element->part_of_speech = $request->get('element_'.$i.'_part_of_speech');
+                    $element->analysis = $request->get('element_'.$i.'_analysis');
+                    $element->head_word_id = $request->get('element_'.$i.'_head_word_id');
                     $element->order = $i;
 
                     $element->save();
                 }
-            }//endfor
-
+            }// endfor
 
             return $gloss->id;
-        });//end transaction
+        }); // end transaction
 
-        //get it to return full display with head word
+        // get it to return full display with head word
         $gloss = EieolGloss::with('elements.head_word')->find($gloss_id);
 
         return [
@@ -135,15 +133,14 @@ class EieolGlossController extends Controller
             'message' => 'Gloss was successfully added.',
             'glossed_text' => EieolGlossedText::with('glosses.language', 'glosses.elements.head_word.language')
                 ->where('id', $request->get('glossed_text_id'))
-                ->first()
+                ->first(),
         ];
-
 
     }
 
     public function update(Request $request, $id)
     {
-        $rules = array(
+        $rules = [
             'surface_form' => 'required',
             'element_1_part_of_speech' => 'required',
             'element_1_head_word_id' => 'required|exists:eieol_head_word,id',
@@ -157,8 +154,8 @@ class EieolGlossController extends Controller
             'element_5_head_word_id' => 'required_with:element_5_part_of_speech',
             'element_6_part_of_speech' => 'required_with:element_6_head_word_id',
             'element_6_head_word_id' => 'required_with:element_6_part_of_speech',
-        );
-        $messages = array(
+        ];
+        $messages = [
             'element_1_part_of_speech.required' => 'The first Part of Speech is required',
             'element_1_head_word_id.required' => 'The first Head Word is required',
             'element_2_part_of_speech.required_with' => 'Since you picked a Head Word, you must enter a Part of Speech',
@@ -171,14 +168,14 @@ class EieolGlossController extends Controller
             'element_5_head_word_id.required_with' => 'Since you entered a Part of Speech, you must pick a Head Word',
             'element_6_part_of_speech.required_with' => 'Since you picked a Head Word, you must enter a Part of Speech',
             'element_6_head_word_id.required_with' => 'Since you entered a Part of Speech, you must pick a Head Word',
-        );
+        ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -192,36 +189,36 @@ class EieolGlossController extends Controller
 
             $gloss->save();
 
-            //loop through element elements
+            // loop through element elements
             for ($i = 1; $i <= 6; $i++) {
-                if ($request->get('element_' . $i . '_part_of_speech')) {
+                if ($request->get('element_'.$i.'_part_of_speech')) {
 
-                    //decide if we are storing or updating elements
-                    if ($request->get('element_' . $i . '_id')) {
-                        $element = EieolElement::find($request->get('element_' . $i . '_id'));
+                    // decide if we are storing or updating elements
+                    if ($request->get('element_'.$i.'_id')) {
+                        $element = EieolElement::find($request->get('element_'.$i.'_id'));
 
-                        $element->part_of_speech = $request->get('element_' . $i . '_part_of_speech');
-                        $element->analysis = $request->get('element_' . $i . '_analysis');
-                        $element->head_word_id = $request->get('element_' . $i . '_head_word_id');
+                        $element->part_of_speech = $request->get('element_'.$i.'_part_of_speech');
+                        $element->analysis = $request->get('element_'.$i.'_analysis');
+                        $element->head_word_id = $request->get('element_'.$i.'_head_word_id');
 
                         $element->save();
                     } else {
                         $element = new EieolElement;
 
                         $element->gloss_id = $gloss->id;
-                        $element->part_of_speech = $request->get('element_' . $i . '_part_of_speech');
-                        $element->analysis = $request->get('element_' . $i . '_analysis');
-                        $element->head_word_id = $request->get('element_' . $i . '_head_word_id');
+                        $element->part_of_speech = $request->get('element_'.$i.'_part_of_speech');
+                        $element->analysis = $request->get('element_'.$i.'_analysis');
+                        $element->head_word_id = $request->get('element_'.$i.'_head_word_id');
                         $element->order = $i;
 
                         $element->save();
                     }
                 }
-            }//endfor
+            }// endfor
 
-        }); //end transaction
+        }); // end transaction
 
-        //get it again in case they change the headword
+        // get it again in case they change the headword
         $gloss = EieolGloss::with('elements.head_word')->find($id);
 
         return [
@@ -230,10 +227,8 @@ class EieolGlossController extends Controller
             'gloss_id' => $gloss->id,
             'glossed_text' => EieolGlossedText::with('glosses.language', 'glosses.elements.head_word.language')
                 ->where('id', $request->get('glossed_text_id'))
-                ->first()
+                ->first(),
         ];
 
-
     }
-
 }

@@ -12,7 +12,6 @@ class Issue extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-
     public function comments(): HasMany
     {
         return $this->hasMany(IssueComment::class);
@@ -33,18 +32,22 @@ class Issue extends Model
             $lesson_id = $pointer_parts[1];
             if ($pointer_parts[2] === 'intro_text') {
                 $lesson = EieolLesson::findOrFail($lesson_id);
+
                 return $lesson->intro_text;
             }
             if ($pointer_parts[2] === 'lesson_translation') {
                 $lesson = EieolLesson::findOrFail($lesson_id);
+
                 return $lesson->lesson_translation;
             }
             if ($pointer_parts[2] === 'grammar') {
                 $grammar = EieolGrammar::findOrFail($pointer_parts[3]);
+
                 return $grammar->grammar_text;
             }
             if ($pointer_parts[2] === 'gloss') {
                 $gloss = EieolGloss::findOrFail($pointer_parts[3]);
+
                 return <<<EOT
 <b>Surface Form:</b><br>
 $gloss->surface_form<br>
@@ -56,6 +59,7 @@ EOT;
             }
             if ($pointer_parts[2] === 'glossed_text') {
                 $glossed_text = EieolGlossedText::findOrFail($pointer_parts[3]);
+
                 return $glossed_text->glossed_text;
             }
         }
@@ -74,23 +78,26 @@ EOT;
             $lesson = EieolLesson::findOrFail($lesson_id);
             $series = $lesson->series;
             if ($pointer_parts[2] === 'intro_text') {
-                return 'Series \'' . $series->title . '\', Intro Text, Lesson ' . $lesson->order . ': ' . $lesson->title;
+                return 'Series \''.$series->title.'\', Intro Text, Lesson '.$lesson->order.': '.$lesson->title;
             }
             if ($pointer_parts[2] === 'lesson_translation') {
-                return 'Series \'' . $series->title . '\', Translation, Lesson ' . $lesson->order . ': ' . $lesson->title;
+                return 'Series \''.$series->title.'\', Translation, Lesson '.$lesson->order.': '.$lesson->title;
             }
             if ($pointer_parts[2] === 'grammar') {
                 $grammar = EieolGrammar::findOrFail($pointer_parts[3]);
-                return 'Series \'' . $series->title . '\', Grammar #' . $grammar->section_number . ', Lesson ' . $lesson->order . ': ' . $lesson->title;
+
+                return 'Series \''.$series->title.'\', Grammar #'.$grammar->section_number.', Lesson '.$lesson->order.': '.$lesson->title;
             }
             if ($pointer_parts[2] === 'gloss') {
                 $gloss = EieolGloss::findOrFail($pointer_parts[3]);
                 $glossed_text = $gloss->glossed_text;
-                return 'Series \'' . $series->title . '\', Glossed Text #' . $glossed_text->order . ', Gloss ' . $gloss->order . ', Lesson ' . $lesson->order . ': ' . $lesson->title;
+
+                return 'Series \''.$series->title.'\', Glossed Text #'.$glossed_text->order.', Gloss '.$gloss->order.', Lesson '.$lesson->order.': '.$lesson->title;
             }
             if ($pointer_parts[2] === 'glossed_text') {
                 $glossed_text = EieolGlossedText::findOrFail($pointer_parts[3]);
-                return 'Series \'' . $series->title . '\', Glossed Text #' . $glossed_text->order . ', Lesson ' . $lesson->order . ': ' . $lesson->title;
+
+                return 'Series \''.$series->title.'\', Glossed Text #'.$glossed_text->order.', Lesson '.$lesson->order.': '.$lesson->title;
             }
         }
 

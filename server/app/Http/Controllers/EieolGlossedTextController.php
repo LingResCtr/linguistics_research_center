@@ -10,22 +10,21 @@ use Normalizer;
 
 class EieolGlossedTextController extends Controller
 {
-
     public function store(Request $request)
     {
 
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_glossed_text,order,null,id,lesson_id,' . $request->get('lesson_id'),
+        $rules = [
+            'order' => 'required|integer|unique:eieol_glossed_text,order,null,id,lesson_id,'.$request->get('lesson_id'),
             'glossed_text' => 'required',
-            'lesson_id' => 'required|exists:eieol_lesson,id'
-        );
+            'lesson_id' => 'required|exists:eieol_lesson,id',
+        ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -39,27 +38,28 @@ class EieolGlossedTextController extends Controller
         $glossed_text->custom_gloss_mapping = $request->get('custom_gloss_mapping');
 
         $glossed_text->save();
+
         return [
             'success' => true,
             'added' => true,
-            'action' => '/admin2/eieol_glossed_text/' . $glossed_text->id, //sent to turn the create form into an update form
+            'action' => '/admin2/eieol_glossed_text/'.$glossed_text->id, // sent to turn the create form into an update form
             'glossed_text_id' => $glossed_text->id,
-            'message' => 'Glossed Text was successfully added.'
+            'message' => 'Glossed Text was successfully added.',
         ];
     }
 
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_glossed_text,order,' . $id . ',id,lesson_id,' . $request->get('lesson_id'),
+        $rules = [
+            'order' => 'required|integer|unique:eieol_glossed_text,order,'.$id.',id,lesson_id,'.$request->get('lesson_id'),
             'glossed_text' => 'required',
-        );
+        ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -72,9 +72,10 @@ class EieolGlossedTextController extends Controller
         $glossed_text->audio_url = $request->get('audio_url');
 
         $glossed_text->save();
+
         return [
             'success' => true,
-            'message' => 'Glossed Text was successfully updated.'
+            'message' => 'Glossed Text was successfully updated.',
         ];
     }
 
@@ -87,5 +88,4 @@ class EieolGlossedTextController extends Controller
         }
         EieolGlossedText::destroy($id);
     }
-
 }

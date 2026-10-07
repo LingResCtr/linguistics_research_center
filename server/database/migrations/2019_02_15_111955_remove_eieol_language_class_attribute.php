@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class RemoveEieolLanguageClassAttribute extends Migration
 {
@@ -13,8 +13,7 @@ class RemoveEieolLanguageClassAttribute extends Migration
      */
     public function up()
     {
-        Schema::table('eieol_language', function(Blueprint $table)
-        {
+        Schema::table('eieol_language', function (Blueprint $table) {
             $table->dropColumn('class_attribute');
         });
     }
@@ -26,8 +25,7 @@ class RemoveEieolLanguageClassAttribute extends Migration
      */
     public function down()
     {
-        Schema::table('eieol_language', function(Blueprint $table)
-        {
+        Schema::table('eieol_language', function (Blueprint $table) {
             $table->string('class_attribute', 191)->nullable();
         });
     }

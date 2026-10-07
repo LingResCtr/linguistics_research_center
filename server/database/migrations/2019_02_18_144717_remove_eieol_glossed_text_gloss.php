@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class RemoveEieolGlossedTextGloss extends Migration
 {
@@ -16,8 +16,8 @@ class RemoveEieolGlossedTextGloss extends Migration
         $gloss_ids_seen = [];
         $gtgs = DB::select('SELECT * FROM eieol_glossed_text_gloss');
         foreach ($gtgs as $gtg) {
-            if (!in_array($gtg->gloss_id, $gloss_ids_seen)) {
-                $gloss_ids_seen []= $gtg->gloss_id;
+            if (! in_array($gtg->gloss_id, $gloss_ids_seen)) {
+                $gloss_ids_seen[] = $gtg->gloss_id;
             } else {
                 $gloss = DB::select('SELECT * FROM eieol_gloss WHERE id=?', [$gtg->gloss_id])[0];
                 DB::insert('INSERT INTO eieol_gloss '.
@@ -31,11 +31,11 @@ class RemoveEieolGlossedTextGloss extends Migration
                         $gloss->author_comments,
                         $gloss->author_done,
                         $gloss->admin_comments,
-                        $gloss->created_at,$gloss->updated_at,$gloss->created_by,$gloss->updated_by
-                ]);
+                        $gloss->created_at, $gloss->updated_at, $gloss->created_by, $gloss->updated_by,
+                    ]);
                 $new_gloss_id = DB::getPdo()->lastInsertId();
                 DB::update('UPDATE eieol_glossed_text_gloss SET gloss_id=? WHERE id=?', [
-                    $new_gloss_id, $gtg->id
+                    $new_gloss_id, $gtg->id,
                 ]);
                 $elements = DB::select('SELECT * FROM eieol_element WHERE gloss_id=?', [$gtg->gloss_id]);
                 foreach ($elements as $element) {
@@ -46,14 +46,13 @@ class RemoveEieolGlossedTextGloss extends Migration
                             $element->analysis,
                             $element->head_word_id,
                             $element->order,
-                            $element->created_at,$element->updated_at,$element->created_by,$element->updated_by
-                    ]);
+                            $element->created_at, $element->updated_at, $element->created_by, $element->updated_by,
+                        ]);
                 }
             }
         }
 
-        Schema::table('eieol_glossed_text_gloss', function(Blueprint $table)
-        {
+        Schema::table('eieol_glossed_text_gloss', function (Blueprint $table) {
             $table->unique('gloss_id');
         });
     }

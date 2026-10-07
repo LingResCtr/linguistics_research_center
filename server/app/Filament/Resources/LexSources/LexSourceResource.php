@@ -19,13 +19,17 @@ class LexSourceResource extends Resource
     protected static ?string $model = LexSource::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Sources';
+
     protected static ?int $navigationSort = 8;
 
     protected static ?string $recordTitleAttribute = 'display';
 
     protected static ?string $pluralModelLabel = 'Sources';
+
     protected static ?string $label = 'Source';
 
     public static function form(Schema $schema): Schema

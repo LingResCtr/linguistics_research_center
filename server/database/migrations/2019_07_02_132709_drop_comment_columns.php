@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class DropCommentColumns extends Migration
 {
@@ -11,7 +11,8 @@ class DropCommentColumns extends Migration
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         $this->dropColumnIfExists('eieol_gloss', 'author_comments');
         $this->dropColumnIfExists('eieol_gloss', 'author_done');
         $this->dropColumnIfExists('eieol_gloss', 'admin_comments');
@@ -32,7 +33,8 @@ class DropCommentColumns extends Migration
         $this->dropColumnIfExists('eieol_lesson', 'translation_admin_comments');
     }
 
-    protected function dropColumnIfExists($table, $column) {
+    protected function dropColumnIfExists($table, $column)
+    {
         if (Schema::hasColumn($table, $column)) {
             Schema::table($table, function (Blueprint $table) use ($column) {
                 $table->dropColumn($column);
@@ -45,7 +47,8 @@ class DropCommentColumns extends Migration
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::table('eieol_gloss', function (Blueprint $table) {
             $table->text('author_comments')->nullable();
             $table->boolean('author_done')->nullable();

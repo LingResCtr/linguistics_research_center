@@ -37,9 +37,9 @@ class EieolLanguagesTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                //BulkActionGroup::make([
+                // BulkActionGroup::make([
                 //    DeleteBulkAction::make(),
-                //]),
+                // ]),
             ]);
     }
 }

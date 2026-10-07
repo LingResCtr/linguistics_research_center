@@ -8,11 +8,10 @@ use App\Models\LexSource;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Model;
 
 class LexReflexForm
 {
@@ -65,14 +64,14 @@ class LexReflexForm
                             ->required(),
                         TextInput::make('page_number')
                             ->label('Page Number'),
-                        TextArea::make('original_text')
+                        Textarea::make('original_text')
                             ->label('Original Text'),
                     ])
                     ->columnSpanFull(),
                 Repeater::make('entries')
                     ->defaultItems(0)
                     ->schema([
-                        TextInput::make('text')->required()
+                        TextInput::make('text')->required(),
                     ])
                     ->grid(3)
                     ->columnSpanFull(),
@@ -84,7 +83,7 @@ class LexReflexForm
                     ])
                     ->orderColumn('order')
                     ->grid(3)
-                    ->hint("Use codes, as listed in the Lexicon > Parts of Speech table")
+                    ->hint('Use codes, as listed in the Lexicon > Parts of Speech table')
                     ->columnSpanFull(),
                 Repeater::make('cross_references')
                     ->label('Cross references')
@@ -95,7 +94,7 @@ class LexReflexForm
                             ->relationship('from_reflex', 'langNameEntriesGloss')
                             ->preload(false)
                             ->searchable()
-                            ->searchPrompt("Search for a Reflex by English gloss or reflex id...")
+                            ->searchPrompt('Search for a Reflex by English gloss or reflex id...')
                             ->getSearchResultsUsing(function (string $search) {
                                 return LexReflex::query()
                                     ->where('gloss->en', 'like', '%'.$search.'%')

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class DenormalizeHeadwordKeywords extends Migration
 {
@@ -13,15 +13,15 @@ class DenormalizeHeadwordKeywords extends Migration
      */
     public function up()
     {
-        Schema::table('eieol_head_word', function(Blueprint $table) {
-            $table->string('keywords',1024);
+        Schema::table('eieol_head_word', function (Blueprint $table) {
+            $table->string('keywords', 1024);
         });
 
         $data = DB::select('select head_word_id,group_concat(keyword) as kwcsv from eieol_head_word_keyword group by head_word_id');
         foreach ($data as $info) {
             DB::update('UPDATE eieol_head_word SET keywords=? WHERE id=?', [
                 $info->kwcsv,
-                $info->head_word_id
+                $info->head_word_id,
             ]);
         }
 

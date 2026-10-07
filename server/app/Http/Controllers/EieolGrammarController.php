@@ -9,23 +9,22 @@ use Normalizer;
 
 class EieolGrammarController extends Controller
 {
-
     public function store(Request $request)
     {
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_grammar,order,null,id,lesson_id,' . $request->get('lesson_id'),
-            'section_number' => 'required|unique:eieol_grammar,section_number,null,id,lesson_id,' . $request->get('lesson_id'),
-            'title' => 'required|unique:eieol_grammar,title,null,id,lesson_id,' . $request->get('lesson_id'),
+        $rules = [
+            'order' => 'required|integer|unique:eieol_grammar,order,null,id,lesson_id,'.$request->get('lesson_id'),
+            'section_number' => 'required|unique:eieol_grammar,section_number,null,id,lesson_id,'.$request->get('lesson_id'),
+            'title' => 'required|unique:eieol_grammar,title,null,id,lesson_id,'.$request->get('lesson_id'),
             'grammar_text' => 'required',
-            'lesson_id' => 'required|exists:eieol_lesson,id'
-        );
+            'lesson_id' => 'required|exists:eieol_lesson,id',
+        ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -38,30 +37,31 @@ class EieolGrammarController extends Controller
         $grammar->lesson_id = $request->get('lesson_id');
 
         $grammar->save();
+
         return [
             'success' => true,
             'added' => true,
             'grammar_id' => $grammar->id,
             'grammar' => $grammar,
-            'action' => '/admin2/eieol_grammar/' . $grammar->id, //sent to turn the create form into an update form
-            'message' => 'Grammar was successfully added.'
+            'action' => '/admin2/eieol_grammar/'.$grammar->id, // sent to turn the create form into an update form
+            'message' => 'Grammar was successfully added.',
         ];
     }
 
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_grammar,order,' . $id . ',id,lesson_id,' . $request->get('lesson_id'),
-            'section_number' => 'required|unique:eieol_grammar,section_number,' . $id . ',id,lesson_id,' . $request->get('lesson_id'),
-            'title' => 'required|unique:eieol_grammar,title,' . $id . ',id,lesson_id,' . $request->get('lesson_id'),
+        $rules = [
+            'order' => 'required|integer|unique:eieol_grammar,order,'.$id.',id,lesson_id,'.$request->get('lesson_id'),
+            'section_number' => 'required|unique:eieol_grammar,section_number,'.$id.',id,lesson_id,'.$request->get('lesson_id'),
+            'title' => 'required|unique:eieol_grammar,title,'.$id.',id,lesson_id,'.$request->get('lesson_id'),
             'grammar_text' => 'required',
-        );
+        ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
 
@@ -73,10 +73,11 @@ class EieolGrammarController extends Controller
         $grammar->grammar_text = Normalizer::normalize($request->get('grammar_text'), Normalizer::FORM_C);
 
         $grammar->save();
+
         return [
             'success' => true,
             'grammar' => $grammar,
-            'message' => 'Grammar: ' . $grammar->title . ' was successfully updated.'
+            'message' => 'Grammar: '.$grammar->title.' was successfully updated.',
         ];
     }
 
@@ -84,5 +85,4 @@ class EieolGrammarController extends Controller
     {
         EieolGrammar::destroy($id);
     }
-
 }

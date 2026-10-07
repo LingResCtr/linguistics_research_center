@@ -13,13 +13,14 @@ class SetLocaleFromSessionMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         if (Session::has('viewer_lang_code')) {
             App::setLocale(Session::get('viewer_lang_code'));
         }
+
         return $next($request);
     }
 }

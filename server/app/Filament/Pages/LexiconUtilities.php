@@ -38,13 +38,16 @@ class LexiconUtilities extends Page implements HasActions
     use InteractsWithActions;
 
     protected static ?string $title = 'Lexicon Utilities';
-    protected static string | UnitEnum | null $navigationGroup = 'Lexicon';
-    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Lexicon';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;
+
     protected static ?string $navigationLabel = 'Lexicon Utilities';
+
     protected static ?int $navigationSort = 999;
 
     protected string $view = 'filament.pages.lexicon-utilities';
-
 
     public static function canAccess(): bool
     {
@@ -55,23 +58,27 @@ class LexiconUtilities extends Page implements HasActions
         if (auth()->user()?->hasRole('Lexicon Manager')) {
             return true;
         }
+
         return false;
     }
 
-    protected function makeChooseLexiconStep() {
+    protected function makeChooseLexiconStep()
+    {
         $lexicon_options = LexLexicon::all()->pluck('name', 'id');
+
         return Step::make('Choose Lexicon')
             ->schema([
                 Select::make('selected_lexicon')
                     ->label('Lexicon')
                     ->options($lexicon_options)
-                    ->required()
+                    ->required(),
             ]);
     }
 
     protected function runLanguageUploadAction(): Action
     {
         $required_csv_headers = ['Family', 'Subfamily', 'Language'];
+
         return Action::make('upload-languages')
             ->modal()
             ->modalHeading('Upload Language CSV')
@@ -81,20 +88,20 @@ class LexiconUtilities extends Page implements HasActions
                 $this->makeChooseLexiconStep(),
                 Step::make('Upload CSV')
                     ->schema([
-                        TextEntry::make('required_fields')->state('Required Columns: ' . implode(', ', $required_csv_headers)),
+                        TextEntry::make('required_fields')->state('Required Columns: '.implode(', ', $required_csv_headers)),
                         FileUpload::make('csv')
                             ->storeFiles(false)
                             ->visibility('public')
-                            //->acceptedFileTypes(['text/csv'])
+                            // ->acceptedFileTypes(['text/csv'])
                             ->required()
                             ->rules([
                                 $this->validateRequiredCsvHeaders($required_csv_headers),
-                            ])
+                            ]),
                     ]),
                 Step::make('Confirm')
                     ->schema([
-                        TextEntry::make('confirm')->state(new HtmlString("<p>Please confirm uploading this data.</p>")),
-                    ])
+                        TextEntry::make('confirm')->state(new HtmlString('<p>Please confirm uploading this data.</p>')),
+                    ]),
             ])
             ->mountUsing(fn (Schema $form) => $form->fill())
             ->action(function (array $data): void {
@@ -118,6 +125,7 @@ class LexiconUtilities extends Page implements HasActions
     {
         $required_category_csv_headers = ['Text', 'Number', 'Abbr'];
         $required_field_csv_headers = ['Text', 'Number', 'Abbr', 'SemanticCategoryAbbr'];
+
         return Action::make('upload-semantics')
             ->modal()
             ->modalHeading('Upload Semantic CSVs')
@@ -127,23 +135,23 @@ class LexiconUtilities extends Page implements HasActions
                 $this->makeChooseLexiconStep(),
                 Step::make('Upload Semantic Categories CSV')
                     ->schema([
-                        TextEntry::make('required_columns')->state('Required Columns: ' . implode(', ', $required_category_csv_headers)),
+                        TextEntry::make('required_columns')->state('Required Columns: '.implode(', ', $required_category_csv_headers)),
                         FileUpload::make('categories_csv')
                             ->storeFiles(false)
                             ->visibility('public')
-                            //->acceptedFileTypes(['text/csv'])
+                            // ->acceptedFileTypes(['text/csv'])
                             ->required()
                             ->rules([
                                 $this->validateRequiredCsvHeaders($required_category_csv_headers),
-                            ])
+                            ]),
                     ]),
                 Step::make('Upload Semantic Fields CSV')
                     ->schema([
-                        TextEntry::make('required_columns')->state('Required Columns: ' . implode(', ', $required_field_csv_headers)),
+                        TextEntry::make('required_columns')->state('Required Columns: '.implode(', ', $required_field_csv_headers)),
                         FileUpload::make('fields_csv')
                             ->storeFiles(false)
                             ->visibility('public')
-                            //->acceptedFileTypes(['text/csv'])
+                            // ->acceptedFileTypes(['text/csv'])
                             ->required()
                             ->rules([
                                 $this->validateRequiredCsvHeaders($required_field_csv_headers),
@@ -160,15 +168,15 @@ class LexiconUtilities extends Page implements HasActions
                                     $found_category_abbrs = collect($field_data)->pluck('SemanticCategoryAbbr')->unique();
                                     $wrong_category_abbrs = $found_category_abbrs->diff($actual_category_abbrs);
                                     if ($wrong_category_abbrs->isNotEmpty()) {
-                                        $fail("Categories in Fields CSV not found in Categories CSV: ".$wrong_category_abbrs->implode(', '));
+                                        $fail('Categories in Fields CSV not found in Categories CSV: '.$wrong_category_abbrs->implode(', '));
                                     }
                                 },
-                            ])
+                            ]),
                     ]),
                 Step::make('Confirm')
                     ->schema([
-                        TextEntry::make('confirm')->state(new HtmlString("<p>Please confirm uploading this data.</p>")),
-                    ])
+                        TextEntry::make('confirm')->state(new HtmlString('<p>Please confirm uploading this data.</p>')),
+                    ]),
             ])
             ->mountUsing(fn (Schema $form) => $form->fill())
             ->action(function (array $data): void {
@@ -211,6 +219,7 @@ class LexiconUtilities extends Page implements HasActions
     protected function runReflexesUploadAction(): Action
     {
         $required_csv_headers = ['Headwords', 'Gloss'];
+
         return Action::make('upload-reflexes')
             ->modal()
             ->modalHeading('Upload Reflex CSV')
@@ -229,17 +238,17 @@ class LexiconUtilities extends Page implements HasActions
                         FileUpload::make('reflexes_csv')
                             ->storeFiles(false)
                             ->visibility('public')
-                            //->acceptedFileTypes(['text/csv'])
+                            // ->acceptedFileTypes(['text/csv'])
                             ->required()
                             ->maxSize(512000) // 500 MB
                             ->rules([
                                 $this->validateRequiredCsvHeaders($required_csv_headers),
-                            ])
+                            ]),
                     ]),
                 Step::make('Confirm')
                     ->schema([
-                        TextEntry::make('confirm')->state(new HtmlString("<p>Please confirm uploading this data.</p>")),
-                    ])
+                        TextEntry::make('confirm')->state(new HtmlString('<p>Please confirm uploading this data.</p>')),
+                    ]),
             ])
             ->mountUsing(fn (Schema $form) => $form->fill())
             ->action(function (array $data): void {
@@ -247,7 +256,7 @@ class LexiconUtilities extends Page implements HasActions
                 \DB::beginTransaction();
                 try {
                     $selected_lexicon_id = $data['selected_lexicon'];
-                    if (str_ends_with($data['reflexes_csv']->getFilename(), ".json")) {
+                    if (str_ends_with($data['reflexes_csv']->getFilename(), '.json')) {
                         $rows = json_decode($this->stripBom($data['reflexes_csv']->get()));
                     } else {
                         $csv = Reader::createFromString($data['reflexes_csv']->get());
@@ -258,22 +267,23 @@ class LexiconUtilities extends Page implements HasActions
                         try {
                             $this->createMissingReflex($selected_lexicon_id, $row);
                         } catch (\League\Csv\Exception $e) {
-                            \Log::error('Error creating reflex for row ' . json_encode($row) . ': ' . $e->getMessage());
-                            throw new \League\Csv\Exception("Error creating reflex for row " . ($upload_ctr + 1) . " '" . $row['Headwords'] . "': " . $e->getMessage(), 0, $e);
+                            \Log::error('Error creating reflex for row '.json_encode($row).': '.$e->getMessage());
+                            throw new \League\Csv\Exception('Error creating reflex for row '.($upload_ctr + 1)." '".$row['Headwords']."': ".$e->getMessage(), 0, $e);
                         }
                         $upload_ctr++;
                         if ($upload_ctr % 100 == 0) {
-                            \Log::info("Uploaded " . $upload_ctr);
+                            \Log::info('Uploaded '.$upload_ctr);
                         }
                     }
                 } catch (\League\Csv\Exception $e) {
                     \DB::rollback();
                     Notification::make()
                         ->title('Upload failed')
-                        ->body('Error: ' . $e->getMessage())
+                        ->body('Error: '.$e->getMessage())
                         ->danger()
                         ->seconds(60)
                         ->send();
+
                     return;
                 }
                 \DB::commit();
@@ -285,20 +295,16 @@ class LexiconUtilities extends Page implements HasActions
             });
     }
 
-
-    /**
-     * @param array $required_category_csv_headers
-     * @return \Closure
-     */
     protected function validateRequiredCsvHeaders(array $required_category_csv_headers): \Closure
     {
-        return fn(): \Closure => function (string $attribute, $value, \Closure $fail) use ($required_category_csv_headers) {
-            if (!$value instanceof TemporaryUploadedFile) {
+        return fn (): \Closure => function (string $attribute, $value, \Closure $fail) use ($required_category_csv_headers) {
+            if (! $value instanceof TemporaryUploadedFile) {
                 $fail('Please upload a valid CSV file.');
+
                 return;
             }
             try {
-                if (str_ends_with($value->getFilename(), ".json")) {
+                if (str_ends_with($value->getFilename(), '.json')) {
                     $this->validateUploadedJSON($value, $required_category_csv_headers);
                 } else {
                     $this->validateUploadedCsv($value, $required_category_csv_headers);
@@ -320,10 +326,11 @@ class LexiconUtilities extends Page implements HasActions
         $csv->setHeaderOffset(0);
         $headers = $csv->getHeader();
         foreach ($required_headers as $required_header) {
-            if (!in_array($required_header, $headers)) {
+            if (! in_array($required_header, $headers)) {
                 throw new \League\Csv\Exception("Header '{$required_header}' is missing");
             }
         }
+
         return $csv->getRecords();
     }
 
@@ -332,16 +339,17 @@ class LexiconUtilities extends Page implements HasActions
         $json_data = json_decode($this->stripBom($file->get()));
         $obj = new ArrayObject($json_data);
         foreach ($required_headers as $required_header) {
-            if (!property_exists($json_data[0], $required_header)) {
+            if (! property_exists($json_data[0], $required_header)) {
                 throw new \League\Csv\Exception("Header '{$required_header}' is missing");
             }
         }
+
         return $obj->getIterator();
     }
 
     protected function createMissingLang($lexicon_id, $lang_name, $family_name, $subfamily_name): void
     {
-        if (!$subfamily_name) {
+        if (! $subfamily_name) {
             $subfamily_name = $family_name;
         }
         $lang_name = trim($lang_name);
@@ -353,7 +361,6 @@ class LexiconUtilities extends Page implements HasActions
             'name' => $family_name,
             'order' => '1',
         ]);
-
 
         $subfamily = LexLanguageSubFamily::create([
             'family_id' => $family->id,
@@ -382,35 +389,35 @@ class LexiconUtilities extends Page implements HasActions
         // * (Optional) Sources (json describing sources)
         // * everything else gets put in LexReflexExtraData
 
-        $reflex = new LexReflex();
+        $reflex = new LexReflex;
         $extra_data = [];
         $sources_data = [];
-        foreach ($row as $key=>$value) {
+        foreach ($row as $key => $value) {
             if ($key == 'Headwords') {
                 $headword_split = explode(',', $value);
                 $headwords = [];
                 foreach ($headword_split as $hw) {
-                    $entry = (object)['text'=>trim($hw)];
-                    $headwords []= $entry;
+                    $entry = (object) ['text' => trim($hw)];
+                    $headwords[] = $entry;
                 }
                 $reflex->entries = $headwords;
-            } else if ($key == 'Gloss') {
+            } elseif ($key == 'Gloss') {
                 $reflex->gloss = $value;
-            } else if ($key == 'Gloss.es') {
+            } elseif ($key == 'Gloss.es') {
                 $reflex->setTranslation('gloss', 'es', $value);
-            } else if ($key == 'Language') {
+            } elseif ($key == 'Language') {
                 $lang = $this->getLanguageByNameAndLexiconId($value, $lexicon_id);
-                if (!$lang) {
-                    throw new \League\Csv\Exception('Unknown Language: ' . $value);
+                if (! $lang) {
+                    throw new \League\Csv\Exception('Unknown Language: '.$value);
                 }
                 $reflex->language_id = $lang->id;
-            } else if ($key == 'Etyma') {
+            } elseif ($key == 'Etyma') {
                 // FIXME
-                throw new \Exception("Etyma crosslinking not supported yet");
-            } else if ($key == 'HomographNumber') {
+                throw new \Exception('Etyma crosslinking not supported yet');
+            } elseif ($key == 'HomographNumber') {
                 // FIXME
-                throw new \Exception("Etyma crosslinking not supported yet");
-            } else if ($key == 'Sources') {
+                throw new \Exception('Etyma crosslinking not supported yet');
+            } elseif ($key == 'Sources') {
                 if (is_string($value)) {
                     $raw = trim($value);
                     if ($raw === '') {
@@ -418,30 +425,30 @@ class LexiconUtilities extends Page implements HasActions
                     }
                     $decoded = json_decode($raw);
                     if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
-                        throw new \League\Csv\Exception("'Sources' must be valid JSON. Error: " . json_last_error_msg());
+                        throw new \League\Csv\Exception("'Sources' must be valid JSON. Error: ".json_last_error_msg());
                     }
                 } else {
                     $decoded = $value;
                 }
-                if (!is_array($decoded)) {
+                if (! is_array($decoded)) {
                     throw new \League\Csv\Exception("'Sources' must decode to an array of source objects.");
                 }
                 $allowedKeys = ['source', 'page_number', 'original_entry'];
                 foreach ($decoded as $idx => $item) {
-                    if (!is_object($item)) {
-                        throw new \League\Csv\Exception("'Sources' element #" . ($idx + 1) . " must be a JSON object.");
+                    if (! is_object($item)) {
+                        throw new \League\Csv\Exception("'Sources' element #".($idx + 1).' must be a JSON object.');
                     }
                     // Ensure required 'source' key
-                    if (!property_exists($item, 'source') || $item->source === null || $item->source === '') {
-                        throw new \League\Csv\Exception("'Sources' element #" . ($idx + 1) . " is missing required key 'source'.");
+                    if (! property_exists($item, 'source') || $item->source === null || $item->source === '') {
+                        throw new \League\Csv\Exception("'Sources' element #".($idx + 1)." is missing required key 'source'.");
                     }
                     // Ensure no unexpected keys
                     $extraKeys = array_diff(array_keys(get_object_vars($item)), $allowedKeys);
-                    if (!empty($extraKeys)) {
-                        throw new \League\Csv\Exception("'Sources' element #" . ($idx + 1) . " contains unsupported keys: " . implode(', ', $extraKeys) . ". Allowed keys are: " . implode(', ', $allowedKeys) . ".");
+                    if (! empty($extraKeys)) {
+                        throw new \League\Csv\Exception("'Sources' element #".($idx + 1).' contains unsupported keys: '.implode(', ', $extraKeys).'. Allowed keys are: '.implode(', ', $allowedKeys).'.');
                     }
 
-                    $sources_data []= $item;
+                    $sources_data[] = $item;
                 }
             } else {
                 if ($value) {
@@ -456,16 +463,16 @@ class LexiconUtilities extends Page implements HasActions
             $source = LexSource::where('lexicon_id', $lexicon->id)
                 ->where('code', $source_code)
                 ->first();
-            if (!$source) {
+            if (! $source) {
                 throw new \League\Csv\Exception('Source "'.$source_code.'" not found in this language\'s lexicon');
             }
             $reflex->sources()->attach($source, [
-                'page_number'=>$source_data->page_number ?? '',
-                'original_text'=>$source_data->original_entry ?? '',
+                'page_number' => $source_data->page_number ?? '',
+                'original_text' => $source_data->original_entry ?? '',
             ]);
         }
-        foreach ($extra_data as $key=>$val) {
-            $ex = new LexReflexExtraData(['key'=>$key, 'value'=>$val]);
+        foreach ($extra_data as $key => $val) {
+            $ex = new LexReflexExtraData(['key' => $key, 'value' => $val]);
             $reflex->extra_data()->save($ex);
         }
     }
@@ -475,13 +482,16 @@ class LexiconUtilities extends Page implements HasActions
         if (substr($text, 0, 3) === "\xEF\xBB\xBF") {
             return substr($text, 3);
         }
+
         return $text;
     }
 
     protected array $cachedLanguages = [];
-    protected function getLanguageByNameAndLexiconId($name, $lexicon_id): ?LexLanguage {
+
+    protected function getLanguageByNameAndLexiconId($name, $lexicon_id): ?LexLanguage
+    {
         $cache_key = "language-{$name}-{$lexicon_id}";
-        if (!array_key_exists($cache_key, $this->cachedLanguages)) {
+        if (! array_key_exists($cache_key, $this->cachedLanguages)) {
             $this->cachedLanguages[$cache_key] = LexLanguage::query()
                 ->whereHas('language_sub_family.language_family', function ($q) use ($lexicon_id) {
                     $q->where('lexicon_id', $lexicon_id);
@@ -489,6 +499,7 @@ class LexiconUtilities extends Page implements HasActions
                 ->where('name->en', $name)
                 ->first();
         }
+
         return $this->cachedLanguages[$cache_key];
     }
 }

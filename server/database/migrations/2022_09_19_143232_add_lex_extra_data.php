@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('lex_etyma', function(Blueprint $table) {
+        Schema::table('lex_etyma', function (Blueprint $table) {
             $table->addColumn('mediumtext', 'extra_data')->nullable();
         });
-        Schema::table('lex_reflex', function(Blueprint $table) {
+        Schema::table('lex_reflex', function (Blueprint $table) {
             $table->addColumn('mediumtext', 'extra_data')->nullable();
         });
 
@@ -29,10 +29,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('lex_etyma', function(Blueprint $table) {
+        Schema::table('lex_etyma', function (Blueprint $table) {
             $table->dropColumn('extra_data');
         });
-        Schema::table('lex_reflex', function(Blueprint $table) {
+        Schema::table('lex_reflex', function (Blueprint $table) {
             $table->dropColumn('extra_data');
         });
     }

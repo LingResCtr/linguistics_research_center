@@ -7,7 +7,7 @@ return new class extends SettingsMigration
     public function up(): void
     {
         $this->migrator->add('site.show_donation_popup', false);
-        $this->migrator->add('site.donation_popup_text', <<<EOF
+        $this->migrator->add('site.donation_popup_text', <<<'EOF'
 <h3>40 for Forty is here!</h3>
 <p>UT is asking the community to help support critical projects like the LRC.</p>
 <p>Please consider making a donation today <a href="https://40for40.utexas.edu/giving-day/46023/department/46180" target="_blank">here</a>.</p>
@@ -20,6 +20,6 @@ return new class extends SettingsMigration
     </div>
 </p>
 EOF
-);
+        );
     }
 };

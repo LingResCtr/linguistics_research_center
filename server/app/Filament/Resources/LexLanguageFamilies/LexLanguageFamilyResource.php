@@ -22,11 +22,15 @@ class LexLanguageFamilyResource extends Resource
     protected static ?string $model = LexLanguageFamily::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Language Families';
+
     protected static ?int $navigationSort = 3;
 
     protected static ?string $pluralModelLabel = 'Language Families';
+
     protected static ?string $label = 'Language Family';
 
     protected static ?string $recordTitleAttribute = 'name';

@@ -68,6 +68,7 @@ class ImportDravidilexCSV extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws \Throwable
      */
     public function handle(): int
@@ -75,6 +76,7 @@ class ImportDravidilexCSV extends Command
         $slug = 'dravidilex_pilot';
         if (LexLexicon::where('slug', $slug)->exists()) {
             $this->error("A lexicon with slug '{$slug}' already exists. Delete it before re-running this import.");
+
             return self::FAILURE;
         }
 
@@ -99,16 +101,17 @@ class ImportDravidilexCSV extends Command
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->error('Import rolled back: ' . $e->getMessage());
+            $this->error('Import rolled back: '.$e->getMessage());
             throw $e;
         }
 
         $this->newLine();
-        $this->info('>> Successfully created lexicon "' . $slug . '" (id ' . $lex->id . ')');
-        if (!$this->argument('reflexes_json')) {
+        $this->info('>> Successfully created lexicon "'.$slug.'" (id '.$lex->id.')');
+        if (! $this->argument('reflexes_json')) {
             $this->info('   Next: re-run with the path to dravidilex_batch_import.json to import etyma + reflexes.');
         }
-        $this->info('   Then run: php artisan app:generate-lexicon-data-cache ' . $lex->id);
+        $this->info('   Then run: php artisan app:generate-lexicon-data-cache '.$lex->id);
+
         return self::SUCCESS;
     }
 
@@ -122,7 +125,7 @@ class ImportDravidilexCSV extends Command
     {
         $this->info('>> Importing languages (three tiers)');
 
-        $langs_csv = Reader::createFromPath(self::DATA_DIR . 'Dravidilex_Languages.csv', 'r');
+        $langs_csv = Reader::createFromPath(self::DATA_DIR.'Dravidilex_Languages.csv', 'r');
         $langs_csv->setHeaderOffset(0);
 
         $families = [];
@@ -136,7 +139,7 @@ class ImportDravidilexCSV extends Command
             $subfamily_name = trim($row['Subfamily']) ?: $family_name;
             $lang_name = trim($row['Language']);
 
-            if (!array_key_exists($family_name, $families)) {
+            if (! array_key_exists($family_name, $families)) {
                 $families[$family_name] = LexLanguageFamily::create([
                     'lexicon_id' => $this->lexicon_id,
                     'name' => $family_name,
@@ -145,8 +148,8 @@ class ImportDravidilexCSV extends Command
             }
             $family = $families[$family_name];
 
-            $subfamily_key = $family_name . '|' . $subfamily_name;
-            if (!array_key_exists($subfamily_key, $subfamilies)) {
+            $subfamily_key = $family_name.'|'.$subfamily_name;
+            if (! array_key_exists($subfamily_key, $subfamilies)) {
                 $subfamilies[$subfamily_key] = LexLanguageSubFamily::create([
                     'family_id' => $family->id,
                     'name' => $subfamily_name,
@@ -156,7 +159,8 @@ class ImportDravidilexCSV extends Command
             $subfamily = $subfamilies[$subfamily_key];
 
             if (array_key_exists($lang_name, $this->lang_ids_lookup)) {
-                $this->warn('duplicate language row skipped: ' . $lang_name);
+                $this->warn('duplicate language row skipped: '.$lang_name);
+
                 continue;
             }
             $language = LexLanguage::create([
@@ -166,7 +170,7 @@ class ImportDravidilexCSV extends Command
             ]);
             $this->lang_ids_lookup[$lang_name] = $language->id;
         }
-        $this->info('   ' . count($families) . ' families, ' . count($subfamilies) . ' subfamilies, ' . count($this->lang_ids_lookup) . ' languages');
+        $this->info('   '.count($families).' families, '.count($subfamilies).' subfamilies, '.count($this->lang_ids_lookup).' languages');
     }
 
     /**
@@ -192,7 +196,7 @@ class ImportDravidilexCSV extends Command
         $fields_csv = Reader::createFromPath('app/Console/Commands/import_data/buck_semantic_field.csv', 'r');
         $fields_csv->setHeaderOffset(0);
         foreach ($fields_csv->getRecords() as $field) {
-            if (!$field['abbr']) {
+            if (! $field['abbr']) {
                 continue;
             }
             [$category_abbr] = explode('_', $field['abbr']);
@@ -202,8 +206,9 @@ class ImportDravidilexCSV extends Command
             $category = LexSemanticCategory::where('lexicon_id', $this->lexicon_id)
                 ->where('abbr', $category_abbr)
                 ->first();
-            if (!$category) {
-                $this->warn('no category for semantic field: ' . $field['abbr']);
+            if (! $category) {
+                $this->warn('no category for semantic field: '.$field['abbr']);
+
                 continue;
             }
             $field_db = LexSemanticField::updateOrCreate([
@@ -215,7 +220,7 @@ class ImportDravidilexCSV extends Command
             ]);
             $this->field_map[$field['abbr']] = $field_db->id;
         }
-        $this->info('   ' . count($this->field_map) . ' semantic fields');
+        $this->info('   '.count($this->field_map).' semantic fields');
     }
 
     /**
@@ -232,25 +237,25 @@ class ImportDravidilexCSV extends Command
      */
     protected function importReflexes(string $json_path): void
     {
-        if (!is_file($json_path)) {
-            throw new \RuntimeException('Reflex JSON not found: ' . $json_path);
+        if (! is_file($json_path)) {
+            throw new \RuntimeException('Reflex JSON not found: '.$json_path);
         }
         ini_set('memory_limit', '1G'); // source-enriched DravidiLex JSON is large.
         $records = json_decode(file_get_contents($json_path));
-        if (!is_array($records)) {
-            throw new \RuntimeException('Could not decode reflex JSON: ' . $json_path);
+        if (! is_array($records)) {
+            throw new \RuntimeException('Could not decode reflex JSON: '.$json_path);
         }
 
         $roots = [];
         $reflexes = [];
         foreach ($records as $record) {
-            if (!empty($record->IsEtymon)) {
+            if (! empty($record->IsEtymon)) {
                 $roots[] = $record;
             } else {
                 $reflexes[] = $record;
             }
         }
-        $this->info('>> Importing ' . count($roots) . ' etyma and ' . count($reflexes) . ' reflexes');
+        $this->info('>> Importing '.count($roots).' etyma and '.count($reflexes).' reflexes');
 
         $this->seedSources();
 
@@ -259,8 +264,8 @@ class ImportDravidilexCSV extends Command
         // "(N)" display — only entries that collide on entry text should show one.
         $entry_counts = [];
         foreach ($roots as $record) {
-            $entry = trim((string)($record->EtymonEntry
-                ?? str_replace('*', '', (string)($record->Headwords ?? ''))));
+            $entry = trim((string) ($record->EtymonEntry
+                ?? str_replace('*', '', (string) ($record->Headwords ?? ''))));
             $entry_counts[$entry] = ($entry_counts[$entry] ?? 0) + 1;
         }
 
@@ -272,9 +277,9 @@ class ImportDravidilexCSV extends Command
         foreach ($roots as $record) {
             // New DravidiLex JSON carries the canonical asterisk-free entry.
             // The fallback keeps older generated JSON importable.
-            $entry = trim((string)($record->EtymonEntry
-                ?? str_replace('*', '', (string)($record->Headwords ?? ''))));
-            $homograph = (int)($record->HomographNumber ?? 1) ?: 1;
+            $entry = trim((string) ($record->EtymonEntry
+                ?? str_replace('*', '', (string) ($record->Headwords ?? ''))));
+            $homograph = (int) ($record->HomographNumber ?? 1) ?: 1;
             // Linking key always resolves (defaults to 1); the stored/displayed
             // number is only set when this entry text actually has a sibling.
             $display_homograph = $entry_counts[$entry] > 1 ? $homograph : null;
@@ -296,7 +301,7 @@ class ImportDravidilexCSV extends Command
                     'semantic_field_id' => $this->field_map[$tag],
                 ]);
             } elseif ($tag) {
-                $this->warn('unknown Buck tag "' . $tag . '" on ' . $entry);
+                $this->warn('unknown Buck tag "'.$tag.'" on '.$entry);
             }
 
             $this->saveExtraData($record, $etymon, null);
@@ -314,8 +319,8 @@ class ImportDravidilexCSV extends Command
             $reflex = $this->buildReflex($record);
             $this->saveExtraData($record, null, $reflex);
 
-            $etyma_entry = trim((string)($record->Etyma ?? ''));
-            $etyma_homograph = (int)($record->EtymaHomographNumber ?? 1) ?: 1;
+            $etyma_entry = trim((string) ($record->Etyma ?? ''));
+            $etyma_homograph = (int) ($record->EtymaHomographNumber ?? 1) ?: 1;
             $key = $this->etymaKey($etyma_entry, $etyma_homograph);
             if ($etyma_entry !== '' && array_key_exists($key, $etyma_index)) {
                 LexEtymaReflex::create([
@@ -325,7 +330,7 @@ class ImportDravidilexCSV extends Command
             } else {
                 $unlinked++;
                 if ($unlinked <= 20) {
-                    $this->warn('no etymon "' . $etyma_entry . '" (homograph ' . $etyma_homograph . ') for ' . ($record->{'Starling ID'} ?? $record->Headwords));
+                    $this->warn('no etymon "'.$etyma_entry.'" (homograph '.$etyma_homograph.') for '.($record->{'Starling ID'} ?? $record->Headwords));
                 }
             }
             $this->attachSources($reflex, $record);
@@ -334,7 +339,7 @@ class ImportDravidilexCSV extends Command
         $bar->finish();
         $this->newLine();
 
-        $this->info('   ' . count($etyma_index) . ' etyma created; ' . count($reflexes) . ' reflexes; ' . $unlinked . ' reflexes with no matching etymon');
+        $this->info('   '.count($etyma_index).' etyma created; '.count($reflexes).' reflexes; '.$unlinked.' reflexes with no matching etymon');
     }
 
     /**
@@ -343,7 +348,7 @@ class ImportDravidilexCSV extends Command
      */
     protected function seedSources(): void
     {
-        $csv = Reader::createFromPath(self::DATA_DIR . 'Dravidilex_Sources.csv', 'r');
+        $csv = Reader::createFromPath(self::DATA_DIR.'Dravidilex_Sources.csv', 'r');
         $csv->setHeaderOffset(0);
         foreach ($csv->getRecords() as $row) {
             $code = trim($row['code'] ?? '');
@@ -356,7 +361,7 @@ class ImportDravidilexCSV extends Command
             );
             $this->sources_by_code[$code] = $source->id;
         }
-        $this->info('   ' . count($this->sources_by_code) . ' sources');
+        $this->info('   '.count($this->sources_by_code).' sources');
     }
 
     /**
@@ -365,18 +370,19 @@ class ImportDravidilexCSV extends Command
      */
     protected function attachSources(LexReflex $reflex, object $record): void
     {
-        if (!isset($record->Sources) || !is_array($record->Sources)) {
+        if (! isset($record->Sources) || ! is_array($record->Sources)) {
             return;
         }
         foreach ($record->Sources as $src) {
-            $code = trim((string)($src->source ?? ''));
-            if ($code === '' || !array_key_exists($code, $this->sources_by_code)) {
-                $this->warn('unknown source code "' . $code . '" on ' . ($record->{'Starling ID'} ?? $record->Headwords));
+            $code = trim((string) ($src->source ?? ''));
+            if ($code === '' || ! array_key_exists($code, $this->sources_by_code)) {
+                $this->warn('unknown source code "'.$code.'" on '.($record->{'Starling ID'} ?? $record->Headwords));
+
                 continue;
             }
             $reflex->sources()->attach($this->sources_by_code[$code], [
-                'page_number' => (string)($src->page_number ?? ''),
-                'original_text' => (string)($src->original_entry ?? ''),
+                'page_number' => (string) ($src->page_number ?? ''),
+                'original_text' => (string) ($src->original_entry ?? ''),
             ]);
         }
     }
@@ -390,14 +396,15 @@ class ImportDravidilexCSV extends Command
      */
     protected function buildReflex(object $record): LexReflex
     {
-        $reflex = new LexReflex();
+        $reflex = new LexReflex;
         $reflex->language_id = $this->resolveLanguage($record->Language);
         $reflex->gloss = ['en' => $record->Gloss];
         $reflex->entries = array_map(
-            fn ($text) => (object)['text' => $text],
+            fn ($text) => (object) ['text' => $text],
             $this->reflexEntryTexts($record)
         );
         $reflex->save();
+
         return $reflex;
     }
 
@@ -408,13 +415,14 @@ class ImportDravidilexCSV extends Command
                 if (is_object($entry) && isset($entry->text)) {
                     return trim((string) $entry->text);
                 }
+
                 return trim((string) $entry);
             }, $record->HeadwordEntries), fn ($text) => $text !== ''));
         }
 
         return array_values(array_filter(array_map(
             fn ($text) => trim($text),
-            explode(',', (string)($record->Headwords ?? ''))
+            explode(',', (string) ($record->Headwords ?? ''))
         ), fn ($text) => $text !== ''));
     }
 
@@ -462,11 +470,11 @@ class ImportDravidilexCSV extends Command
         if (array_key_exists($lang_name, $this->lang_ids_lookup)) {
             return $this->lang_ids_lookup[$lang_name];
         }
-        $this->warn('creating unlisted language: ' . $lang_name);
+        $this->warn('creating unlisted language: '.$lang_name);
         $family = LexLanguageFamily::whereRaw("JSON_EXTRACT(name, '$.en') = ?", 'Other')
             ->where('lexicon_id', $this->lexicon_id)
             ->first();
-        if (!$family) {
+        if (! $family) {
             $family = LexLanguageFamily::create([
                 'lexicon_id' => $this->lexicon_id,
                 'name' => 'Other',
@@ -476,7 +484,7 @@ class ImportDravidilexCSV extends Command
         $subfamily = LexLanguageSubFamily::whereRaw("JSON_EXTRACT(name, '$.en') = ?", 'Other')
             ->where('family_id', $family->id)
             ->first();
-        if (!$subfamily) {
+        if (! $subfamily) {
             $subfamily = LexLanguageSubFamily::create([
                 'family_id' => $family->id,
                 'name' => 'Other',
@@ -489,12 +497,12 @@ class ImportDravidilexCSV extends Command
             'order' => 999,
         ]);
         $this->lang_ids_lookup[$lang_name] = $language->id;
+
         return $language->id;
     }
 
     protected function etymaKey(string $entry, int $homograph): string
     {
-        return $entry . '|' . $homograph;
+        return $entry.'|'.$homograph;
     }
-
 }

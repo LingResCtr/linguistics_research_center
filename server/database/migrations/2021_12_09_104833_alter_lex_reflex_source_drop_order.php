@@ -13,7 +13,7 @@ class AlterLexReflexSourceDropOrder extends Migration
      */
     public function up()
     {
-        Schema::table('lex_reflex_source', function(Blueprint $table) {
+        Schema::table('lex_reflex_source', function (Blueprint $table) {
             $table->dropColumn('order');
         });
     }
@@ -25,7 +25,7 @@ class AlterLexReflexSourceDropOrder extends Migration
      */
     public function down()
     {
-        Schema::table('lex_reflex_source', function(Blueprint $table) {
+        Schema::table('lex_reflex_source', function (Blueprint $table) {
             $table->integer('order');
         });
     }

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\EieolSeries\Schemas;
 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 
 class EieolSeriesForm

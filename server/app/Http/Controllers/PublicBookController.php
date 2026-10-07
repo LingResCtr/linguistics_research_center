@@ -13,7 +13,8 @@ class PublicBookController extends Controller
         if (count($sections) === 0) {
             abort(404);
         }
-        return redirect('/books/' . $bookSlug . '/' . $sections[0]->slug);
+
+        return redirect('/books/'.$bookSlug.'/'.$sections[0]->slug);
     }
 
     public function bookSection($bookSlug, $sectionSlug)
@@ -21,11 +22,12 @@ class PublicBookController extends Controller
         $book = Book::where('slug', $bookSlug)->firstOrFail();
         $all_sections = $book->sections;
         $section = $book->sections->firstWhere('slug', $sectionSlug);
-        if (!$section) {
+        if (! $section) {
             abort(404);
         }
         $prev_section = $book->sections->reverse()->firstWhere('order', '<', $section->order);
         $next_section = $book->sections->firstWhere('order', '>', $section->order);
+
         return view('book_section', [
             'book' => $book,
             'section' => $section,

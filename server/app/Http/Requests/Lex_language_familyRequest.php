@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +27,7 @@ class Lex_language_familyRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'order' => ['required', Rule::unique('lex_language_family')->ignore($this->input('id'))]
+            'order' => ['required', Rule::unique('lex_language_family')->ignore($this->input('id'))],
         ];
     }
 

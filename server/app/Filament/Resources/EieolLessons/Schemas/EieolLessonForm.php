@@ -30,30 +30,30 @@ class EieolLessonForm
                     ->hiddenOn('create')
                     ->default(null)
                     ->profile('eieol_lesson')
-                    ->lrcCharSequences(fn(EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
-                    ->lrcLanguages(fn(EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
+                    ->lrcCharSequences(fn (EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
+                    ->lrcLanguages(fn (EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
                     ->contentCss('/css/lrcstyle.css')
                     ->columnSpanFull(),
                 TinyMceRichText::make('lesson_text')
                     ->hiddenOn('create')
                     ->default(null)
                     ->profile('eieol_lesson')
-                    ->lrcCharSequences(fn(EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
-                    ->lrcLanguages(fn(EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
+                    ->lrcCharSequences(fn (EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
+                    ->lrcLanguages(fn (EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
                     ->contentCss('/css/lrcstyle.css')
                     ->columnSpanFull(),
                 TinyMceRichText::make('lesson_translation')
                     ->hiddenOn('create')
                     ->default(null)
                     ->profile('eieol_lesson')
-                    ->lrcCharSequences(fn(EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
-                    ->lrcLanguages(fn(EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
+                    ->lrcCharSequences(fn (EieolLesson $lesson) => $lesson?->language?->getTinyMceCharmapConfig())
+                    ->lrcLanguages(fn (EieolLesson $lesson) => $lesson?->getTinyMceLanguages())
                     ->contentCss('/css/lrcstyle.css')
                     ->columnSpanFull(),
                 TextEntry::make('rich_editor_warning')
                     ->label('Page editors available on save')
                     ->state('Choose a language and save this Lesson to enable to page-content editors.')
-                    ->visibleOn('create')
+                    ->visibleOn('create'),
             ]);
     }
 }

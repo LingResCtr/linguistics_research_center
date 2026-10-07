@@ -22,10 +22,15 @@ class LexEtymaResource extends Resource
     protected static ?string $model = LexEtyma::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAmericas;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Etyma';
+
     protected static ?int $navigationSort = 6;
+
     protected static ?string $pluralModelLabel = 'Etyma';
+
     protected static ?string $label = 'Etymon';
 
     protected static ?string $recordTitleAttribute = 'entry';

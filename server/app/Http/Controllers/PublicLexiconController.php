@@ -16,6 +16,7 @@ class PublicLexiconController extends Controller
     public function index($lexicon_slug)
     {
         $lex = $this->getLexicon($lexicon_slug);
+
         return view('lexicon/lex_home', [
             'lexicon' => $lex,
             'selected_sidebar' => 'language',
@@ -28,12 +29,14 @@ class PublicLexiconController extends Controller
         if (request()->input('return_to')) {
             return redirect(request()->input('return_to'));
         }
-        return redirect('/lexicon/' . $lexicon_slug);
+
+        return redirect('/lexicon/'.$lexicon_slug);
     }
 
     public function protolanguage_home($lexicon_slug)
     {
         $lex = $this->getLexicon($lexicon_slug);
+
         return view('lexicon/lex_protolanguage_home', [
             'lexicon' => $lex,
             'protolang' => true,
@@ -46,10 +49,11 @@ class PublicLexiconController extends Controller
         $lex = $this->getLexicon($lexicon_slug);
         $etymon = LexEtyma::with([
             'reflexes',
-            'reflexes.language'
+            'reflexes.language',
         ])
             ->where('lexicon_id', $lex->id)
             ->findOrFail($etymon_id);
+
         return view('lexicon/lex_etymon', [
             'lexicon' => $lex,
             'etymon' => $etymon,
@@ -70,6 +74,7 @@ class PublicLexiconController extends Controller
                 $query->where('lexicon_id', $lex->id);
             })
             ->findOrFail($field_id);
+
         return view('lexicon/lex_field', [
             'lexicon' => $lex,
             'field' => $field,
@@ -85,13 +90,14 @@ class PublicLexiconController extends Controller
             'etyma',
             'etyma.reflexes',
             'etyma.reflexes.language',
-            'sources'
+            'sources',
         ])
             ->whereHas('language.language_sub_family.language_family', function ($query) use ($lex) {
                 $query->where('lexicon_id', $lex->id);
             })
             ->findOrFail($word_id);
         $language = $word->language;
+
         return view('lexicon/lex_word', [
             'lexicon' => $lex,
             'language' => $language,
@@ -109,6 +115,7 @@ class PublicLexiconController extends Controller
                 $query->where('lexicon_id', $lex->id);
             })
             ->findOrFail($lang_id);
+
         return view('lexicon/lex_language', [
             'lexicon' => $lex,
             'language' => $language,
@@ -119,8 +126,9 @@ class PublicLexiconController extends Controller
     public function page($lexicon_slug, $page_slug_fragment)
     {
         $lex = $this->getLexicon($lexicon_slug);
-        $page_url = "lexicon/" . $lexicon_slug . '/page/' . $page_slug_fragment;
+        $page_url = 'lexicon/'.$lexicon_slug.'/page/'.$page_slug_fragment;
         $page = Page::where('slug', $page_url)->firstOrFail();
+
         return view('lexicon/lex_page', [
             'lexicon' => $lex,
             'page' => $page,
@@ -173,9 +181,9 @@ class PublicLexiconController extends Controller
         foreach ($columns as $column) {
             if ($column['search']['value']) {
                 if ($column['search']['regex']) {
-                    $filtered_reflexes = $filtered_reflexes->where('data->' . $column['name'], 'REGEXP', $column['search']['value']);
+                    $filtered_reflexes = $filtered_reflexes->where('data->'.$column['name'], 'REGEXP', $column['search']['value']);
                 } else {
-                    $filtered_reflexes = $filtered_reflexes->where('data->' . $column['name'], 'LIKE', '%' . $column['search']['value'] . '%');
+                    $filtered_reflexes = $filtered_reflexes->where('data->'.$column['name'], 'LIKE', '%'.$column['search']['value'].'%');
                 }
             }
         }
@@ -185,9 +193,9 @@ class PublicLexiconController extends Controller
             $filtered_reflexes = $filtered_reflexes->where(function (Builder $q) use ($columns, $search) {
                 foreach ($columns as $column) {
                     if ($search['regex']) {
-                        $q = $q->orWhere('data->' . $column['name'], 'REGEXP', $search['value']);
+                        $q = $q->orWhere('data->'.$column['name'], 'REGEXP', $search['value']);
                     } else {
-                        $q = $q->orWhere('data->' . $column['name'], 'LIKE', '%' . $search['value'] . '%');
+                        $q = $q->orWhere('data->'.$column['name'], 'LIKE', '%'.$search['value'].'%');
                     }
                 }
             });
@@ -197,7 +205,7 @@ class PublicLexiconController extends Controller
         if ($order) {
             $order_by_key = $order[0]['name'];
             $order_by_dir = $order[0]['dir'];
-            $filtered_reflexes->orderBy('data->' . $order_by_key, $order_by_dir);
+            $filtered_reflexes->orderBy('data->'.$order_by_key, $order_by_dir);
         }
 
         $filtered_reflexes_count = $filtered_reflexes->count();
@@ -208,11 +216,12 @@ class PublicLexiconController extends Controller
             ->map(function ($r) {
                 $d = json_decode($r->data);
                 $d->id = $r->reflex_id;
+
                 return $d;
             });
 
-        return (object)[
-            'draw' => (int)request()->input('draw'),
+        return (object) [
+            'draw' => (int) request()->input('draw'),
             'recordsTotal' => $reflex_count,
             'recordsFiltered' => $filtered_reflexes_count,
             'data' => $data,

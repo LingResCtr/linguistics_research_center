@@ -33,21 +33,21 @@ return [
         // FIXME not implemented yet
         'issue' => [
             'plugins' => 'code searchreplace lists advlist link anchor table image',
-            'toolbar' =>  'code | undo redo | bold italic removeformat | '
-                . 'numlist bullist | outdent indent | link unlink | table hr | '
-                . 'formatselect fontsizeselect | image | '
-                . ' blockquote | alignleft aligncenter alignright alignjustify ',
+            'toolbar' => 'code | undo redo | bold italic removeformat | '
+                .'numlist bullist | outdent indent | link unlink | table hr | '
+                .'formatselect fontsizeselect | image | '
+                .' blockquote | alignleft aligncenter alignright alignjustify ',
             'upload_directory' => null,
         ],
 
         'eieol_lesson' => [
             'plugins' => 'code searchreplace lists advlist link anchor table image directionality',
-            'toolbar' =>  'code language lrc_charsequences | undo redo | bold italic underline strikethrough subscript superscript | removeformat | '
-               . 'numlist bullist | outdent indent | link unlink | table hr | '
-               . 'formatselect fontsizeselect | image | '
-               . ' blockquote | alignleft aligncenter alignright alignjustify ',
+            'toolbar' => 'code language lrc_charsequences | undo redo | bold italic underline strikethrough subscript superscript | removeformat | '
+               .'numlist bullist | outdent indent | link unlink | table hr | '
+               .'formatselect fontsizeselect | image | '
+               .' blockquote | alignleft aligncenter alignright alignjustify ',
             'upload_directory' => null,
-        ]
+        ],
 
         /*
         |--------------------------------------------------------------------------
