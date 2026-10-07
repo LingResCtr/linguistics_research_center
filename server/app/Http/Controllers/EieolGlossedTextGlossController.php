@@ -18,25 +18,25 @@ use Illuminate\Support\Facades\Validator;
 
 class EieolGlossedTextGlossController extends Controller
 {
-
     public function store(Request $request)
     {
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_gloss,order,null,id,glossed_text_id,' . $request->get('glossed_text_id'),
+        $rules = [
+            'order' => 'required|integer|unique:eieol_gloss,order,null,id,glossed_text_id,'.$request->get('glossed_text_id'),
             'glossed_text_id' => 'required|exists:eieol_glossed_text,id',
-            'gloss_id' => 'required|exists:eieol_gloss,id'
-        );
+            'gloss_id' => 'required|exists:eieol_gloss,id',
+        ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             $msg = '';
             foreach ($validator->getMessageBag()->toArray() as $key => $value) {
-                $msg .= $value[0] . ' ';
+                $msg .= $value[0].' ';
             }
+
             return [
                 'fail' => true,
-                'msg' => $msg
+                'msg' => $msg,
             ];
         }
         $gloss = EieolGloss::findOrFail($request->get('gloss_id'));
@@ -47,22 +47,22 @@ class EieolGlossedTextGlossController extends Controller
 
         return [
             'success' => true,
-            'gloss' => $gloss
+            'gloss' => $gloss,
         ];
     }
 
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'order' => 'required|integer|unique:eieol_gloss,order,' . $id . ',id,glossed_text_id,' . $request->get('glossed_text_id')
-        );
+        $rules = [
+            'order' => 'required|integer|unique:eieol_gloss,order,'.$id.',id,glossed_text_id,'.$request->get('glossed_text_id'),
+        ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return [
                 'fail' => true,
-                'errors' => $validator->getMessageBag()->toArray()
+                'errors' => $validator->getMessageBag()->toArray(),
             ];
         }
         $gloss = EieolGloss::findOrFail($id);
@@ -70,6 +70,7 @@ class EieolGlossedTextGlossController extends Controller
         $gloss->order = $request->get('order');
 
         $gloss->save();
+
         return [
             'success' => true,
             'message' => 'Gloss order was successfully updated.',
@@ -87,7 +88,7 @@ class EieolGlossedTextGlossController extends Controller
     public function postCopyGloss(Request $request)
     {
         $gloss_order = EieolGloss::where('glossed_text_id', $request->get('glossed_text_id'))
-                ->max('order')
+            ->max('order')
             + 10;
 
         $gloss = EieolGloss::findOrFail($request->get('existing_gloss_id'));
@@ -96,13 +97,13 @@ class EieolGlossedTextGlossController extends Controller
         $new_gloss->glossed_text_id = $request->get('glossed_text_id');
         $new_gloss->order = $gloss_order;
         $new_gloss->save();
+
         return [
             'success' => true,
             'gloss_id' => $new_gloss_id,
             'glossed_text' => EieolGlossedText::with('glosses.language', 'glosses.elements.head_word.language')
                 ->where('id', $request->get('glossed_text_id'))
-                ->first()
+                ->first(),
         ];
     }
-
 }

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\LexLexicons\Tables;
 
 use App\Filament\Resources\LexLexicons\LexLexiconResource;
 use App\Models\LexLexicon;
-
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -36,9 +35,9 @@ class LexLexiconsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                //BulkActionGroup::make([
+                // BulkActionGroup::make([
                 //    DeleteBulkAction::make(),
-                //]),
+                // ]),
             ]);
     }
 }

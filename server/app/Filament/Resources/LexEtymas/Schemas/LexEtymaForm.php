@@ -7,8 +7,8 @@ use App\Models\LexReflex;
 use App\Models\LexSemanticField;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class LexEtymaForm
@@ -45,7 +45,7 @@ class LexEtymaForm
                     ->relationship('cross_references', 'entry')
                     ->multiple()
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->lexiconNameEntryGloss)
-                    ->searchPrompt("Search for an Etymon by entry or etymon id...")
+                    ->searchPrompt('Search for an Etymon by entry or etymon id...')
                     ->getSearchResultsUsing(function (string $search) {
                         return LexEtyma::query()
                             ->where('entry', 'like', '%'.$search.'%')
@@ -60,7 +60,7 @@ class LexEtymaForm
                     ->relationship('semantic_fields', 'text')
                     ->multiple()
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->lexiconNameAbbrText)
-                    ->searchPrompt("Search for a Semantic Field by abbreviation or text...")
+                    ->searchPrompt('Search for a Semantic Field by abbreviation or text...')
                     ->getSearchResultsUsing(function (string $search) {
                         return LexSemanticField::query()
                             ->where('abbr', 'like', '%'.$search.'%')
@@ -76,7 +76,7 @@ class LexEtymaForm
                     ->relationship('reflexes', 'langNameEntriesGloss')
                     ->multiple()
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->langNameEntriesGloss)
-                    ->searchPrompt("Search for a Reflex by English gloss or reflex id...")
+                    ->searchPrompt('Search for a Reflex by English gloss or reflex id...')
                     ->getSearchResultsUsing(function (string $search) {
                         return LexReflex::query()
                             ->where('gloss->en', 'like', '%'.$search.'%')

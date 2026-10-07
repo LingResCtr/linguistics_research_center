@@ -22,13 +22,17 @@ class LexSemanticCategoryResource extends Resource
     protected static ?string $model = LexSemanticCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Semantic Categories';
+
     protected static ?int $navigationSort = 9;
 
     protected static ?string $recordTitleAttribute = 'abbr';
 
     protected static ?string $pluralModelLabel = 'Semantic Categories';
+
     protected static ?string $label = 'Semantic Category';
 
     public static function form(Schema $schema): Schema

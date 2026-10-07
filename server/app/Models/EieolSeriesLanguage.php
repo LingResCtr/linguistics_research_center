@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EieolSeriesLanguage extends Model
 {
-
     protected $table = 'eieol_series_language';
 
     public $timestamps = false;
@@ -16,5 +15,4 @@ class EieolSeriesLanguage extends Model
     {
         return $this->belongsTo(EieolSeries::class);
     }
-
 }

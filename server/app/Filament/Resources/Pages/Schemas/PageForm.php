@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Pages\Schemas;
 
 use App\Filament\Forms\Components\TinyMceRichText;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 
 class PageForm

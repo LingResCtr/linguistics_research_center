@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AlterIsoLanguageIsoId extends Migration
 {
@@ -13,8 +13,8 @@ class AlterIsoLanguageIsoId extends Migration
      */
     public function up()
     {
-        Schema::table('iso_language', function(Blueprint $table) {
-            $table->renameColumn('id','iso_id');
+        Schema::table('iso_language', function (Blueprint $table) {
+            $table->renameColumn('id', 'iso_id');
         });
     }
 
@@ -25,8 +25,8 @@ class AlterIsoLanguageIsoId extends Migration
      */
     public function down()
     {
-        Schema::table('iso_language', function(Blueprint $table) {
-            $table->renameColumn('iso_id','id');
+        Schema::table('iso_language', function (Blueprint $table) {
+            $table->renameColumn('iso_id', 'id');
         });
     }
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $lessonText = '';
             $glossedTexts = DB::table('eieol_glossed_text')->where('lesson_id', $lesson->id)->orderBy('order')->get();
             foreach ($glossedTexts as $glossedText) {
-                $lessonText .= $glossedText->glossed_text . ' ';
+                $lessonText .= $glossedText->glossed_text.' ';
             }
             DB::table('eieol_lesson')->where('id', $lesson->id)->update(['lesson_text' => $lessonText]);
         }

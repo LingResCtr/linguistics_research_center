@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpUnhandledExceptionInspection */
 
 /** @noinspection PhpMissingReturnTypeInspection */
@@ -52,27 +53,29 @@ class IssueController extends Controller
             explode(',', $language->custom_keyboard_layout)
         );
         $result = new \stdClass;
-        $result->language_list = [$language->lang_attribute . ':' . $language->language];
+        $result->language_list = [$language->lang_attribute.':'.$language->language];
         $result->language_lang = [$language->lang_attribute];
         $result->specialChars = $language->custom_keyboard_layout;
 
         foreach ($lesson->series->languages as $add_lang) {
-            $result->language_list [] = $add_lang->lang . ':' . $add_lang->display;
-            $result->language_lang [] = $add_lang->lang;
+            $result->language_list[] = $add_lang->lang.':'.$add_lang->display;
+            $result->language_lang[] = $add_lang->lang;
         }
+
         return $result;
     }
 
     public function create(Request $request)
     {
         $pointer = $request->get('pointer');
-        $issue = new Issue();
+        $issue = new Issue;
         $issue->name = '';
         $issue->text = Issue::getTextFromPointer($pointer);
         $issue->pointer = $pointer;
         $issue->pointer_desc = Issue::getPointerDescFromPointer($pointer);
         $issue->status = 'open';
         $languages = self::getLanguagesForPointer($pointer);
+
         return view('admin/issue_create', [
             'issue' => $issue,
             'languages' => $languages,
@@ -82,7 +85,7 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
-        $issue = new Issue();
+        $issue = new Issue;
         $issue->name = $request->get('name');
         $issue->text = $request->get('text');
         $issue->pointer = $request->get('pointer');
@@ -91,10 +94,10 @@ class IssueController extends Controller
         $issue->save();
 
         $comment_text = $request->get('comment_text');
-        if (!$comment_text) {
+        if (! $comment_text) {
             $comment_text = 'Issue created';
         }
-        $comment = new IssueComment();
+        $comment = new IssueComment;
         $comment->issue_id = $issue->id;
         $comment->type = 'comment';
         $comment->text = $comment_text;
@@ -108,9 +111,10 @@ class IssueController extends Controller
     {
         $issue->load('comments');
         $languages = self::getLanguagesForPointer($issue->pointer);
+
         return view('admin/issue_edit', [
             'issue' => $issue,
-            'languages' => $languages
+            'languages' => $languages,
         ]);
     }
 
@@ -118,13 +122,14 @@ class IssueController extends Controller
     {
         $issue->update($request->all());
         if ($request->get('comment_type')) {
-            $comment = new IssueComment();
+            $comment = new IssueComment;
             $comment->issue_id = $issue->id;
             $comment->type = $request->get('comment_type');
             $comment->text = $request->get('comment_text') ?: '';
             $comment->user_logon = Auth::user()->name;
             $comment->save();
         }
-        return redirect('/admin2/issues/' . $issue->id);
+
+        return redirect('/admin2/issues/'.$issue->id);
     }
 }

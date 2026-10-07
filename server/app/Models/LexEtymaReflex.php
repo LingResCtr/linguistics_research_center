@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class LexEtymaReflex extends Model
 {
-
     protected $table = 'lex_etyma_reflex';
 
     protected $guarded = [
-        'id', 'created_at', 'updated_at'
+        'id', 'created_at', 'updated_at',
     ];
 
     public function etyma(): HasOne

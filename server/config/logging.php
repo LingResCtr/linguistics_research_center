@@ -61,14 +61,14 @@ return [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
             'channel' => env('LOG_SLACK_CHANNEL', '#fire-alarms-lrc'),
-            'username' => env("APP_NAME") . ' - ' . env("APP_ENV"),
+            'username' => env('APP_NAME').' - '.env('APP_ENV'),
             'emoji' => ':fire:',
             'level' => 'error',
             'attachment' => false,
         ],
 
         'papertrail' => [
-            'driver'  => 'monolog',
+            'driver' => 'monolog',
             'level' => 'debug',
             'handler' => SyslogUdpHandler::class,
             'handler_with' => [

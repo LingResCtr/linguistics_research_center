@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Widgets\SeriesEditorNavWidget;
+use App\Models\Issue;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -47,19 +48,20 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Issues')
                     ->url('/admin2/issues')
                     ->icon('heroicon-o-bell')
-                    ->badge(function() {
-                        $issues = \App\Models\Issue::where('status', 'open');
-                        if (!auth()->user()?->isAdmin()) {
+                    ->badge(function () {
+                        $issues = Issue::where('status', 'open');
+                        if (! auth()->user()?->isAdmin()) {
                             $serieses = auth()->user()->editableSeries->sortBy('order');
                             $issues = $issues->where(function ($query) use ($serieses) {
                                 foreach ($serieses as $series) {
                                     foreach ($series->lessons as $lesson) {
-                                        $query->orWhere('pointer', 'like', '/lesson/' . $lesson->id . '/%');
+                                        $query->orWhere('pointer', 'like', '/lesson/'.$lesson->id.'/%');
                                     }
                                 }
                             });
                             $issues = $issues->distinct();
                         }
+
                         return $issues->count();
                     }),
             ])

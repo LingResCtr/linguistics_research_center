@@ -22,13 +22,17 @@ class LexLanguageResource extends Resource
     protected static ?string $model = LexLanguage::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Languages';
+
     protected static ?int $navigationSort = 5;
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $pluralModelLabel = 'Languages';
+
     protected static ?string $label = 'Language';
 
     public static function form(Schema $schema): Schema

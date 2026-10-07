@@ -21,47 +21,47 @@ return new class extends Migration
         });
 
         DB::table('lex_lexicon')->insert([
-            'id'=>1,
-            'slug'=>'ielex',
-            'name'=>'IELEX'
+            'id' => 1,
+            'slug' => 'ielex',
+            'name' => 'IELEX',
         ]);
         DB::table('lex_lexicon')->insert([
-            'id'=>2,
-            'slug'=>'semitilex',
-            'name'=>'SEMITILEX'
+            'id' => 2,
+            'slug' => 'semitilex',
+            'name' => 'SEMITILEX',
         ]);
 
-        foreach (['lex_part_of_speech','lex_language_family','lex_semantic_category','lex_source','lex_etyma'] as $table) {
+        foreach (['lex_part_of_speech', 'lex_language_family', 'lex_semantic_category', 'lex_source', 'lex_etyma'] as $table) {
             Schema::table($table, function (Blueprint $table) {
                 $table->unsignedBigInteger('lexicon_id');
             });
         }
 
-        Schema::table('lex_part_of_speech', function(Blueprint $table) {
+        Schema::table('lex_part_of_speech', function (Blueprint $table) {
             $table->dropUnique(['code']);
             $table->index(['lexicon_id', 'code']);
         });
-        Schema::table('lex_language_family', function(Blueprint $table) {
+        Schema::table('lex_language_family', function (Blueprint $table) {
             $table->dropUnique(['name']);
             $table->index(['lexicon_id', 'name', 'order']);
         });
-        Schema::table('lex_semantic_category', function(Blueprint $table) {
+        Schema::table('lex_semantic_category', function (Blueprint $table) {
             $table->dropUnique(['abbr']);
             $table->dropUnique(['text']);
             $table->index(['lexicon_id', 'abbr']);
         });
-        Schema::table('lex_source', function(Blueprint $table) {
+        Schema::table('lex_source', function (Blueprint $table) {
             $table->dropUnique(['display']);
             $table->index(['lexicon_id', 'code']);
         });
-        Schema::table('lex_etyma', function(Blueprint $table) {
+        Schema::table('lex_etyma', function (Blueprint $table) {
             $table->dropUnique(['order']);
             $table->dropUnique(['old_id']);
             $table->index(['lexicon_id', 'order']);
         });
 
-        foreach (['lex_part_of_speech','lex_language_family','lex_semantic_category','lex_source','lex_etyma'] as $table) {
-            DB::table($table)->update(['lexicon_id'=>1]);
+        foreach (['lex_part_of_speech', 'lex_language_family', 'lex_semantic_category', 'lex_source', 'lex_etyma'] as $table) {
+            DB::table($table)->update(['lexicon_id' => 1]);
 
             Schema::table($table, function (Blueprint $table) {
                 $table->foreign('lexicon_id')->references('id')->on('lex_lexicon');
@@ -74,8 +74,5 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
-
-    }
+    public function down() {}
 };

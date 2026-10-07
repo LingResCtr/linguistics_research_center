@@ -13,18 +13,18 @@ class AddUserIsAdmin extends Migration
      */
     public function up()
     {
-        Schema::table('user', function(Blueprint $table) {
+        Schema::table('user', function (Blueprint $table) {
             $table->boolean('is_admin');
         });
 
-        $users = \DB::table('user')->get();
+        $users = DB::table('user')->get();
         foreach ($users as $user) {
-            $num_admin_perms = \DB::table('user_permission')
+            $num_admin_perms = DB::table('user_permission')
                 ->where('user_id', $user->id)
                 ->where('permission', 'ADMIN')
                 ->count();
             if ($num_admin_perms > 0) {
-                \DB::table('user')
+                DB::table('user')
                     ->where('id', $user->id)
                     ->update(['is_admin' => 1]);
             }
@@ -38,7 +38,7 @@ class AddUserIsAdmin extends Migration
      */
     public function down()
     {
-        Schema::table('user', function(Blueprint $table) {
+        Schema::table('user', function (Blueprint $table) {
             $table->dropColumn('is_admin');
         });
     }

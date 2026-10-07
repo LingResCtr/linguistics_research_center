@@ -22,6 +22,7 @@ use League\Csv\Reader;
 class ImportMayalexCSV extends Command
 {
     protected $lang_ids_lookup = [];
+
     protected $lexicon_id;
 
     /**
@@ -40,14 +41,15 @@ class ImportMayalexCSV extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws \Throwable
      */
     public function handle()
     {
         $etymonExtraDataKeys = [
-            'kaufman_spelling'=>'word (source spelling)',
-            'practical_orthography'=>'word (practical orthography)',
-            'ipa_spelling'=>'word (ipa)',
+            'kaufman_spelling' => 'word (source spelling)',
+            'practical_orthography' => 'word (practical orthography)',
+            'ipa_spelling' => 'word (ipa)',
             'spanish_definition' => 'spanish definition',
             'english_definition' => 'english definition',
             'source' => 'source',
@@ -58,9 +60,9 @@ class ImportMayalexCSV extends Command
             'other' => 'other',
         ];
         $reflexExtraDataKeys = [
-            'kaufman_spelling'=>'word (source spelling)',
-            'practical_orthography'=>'word (practical orthography)',
-            'ipa_spelling'=>'word (ipa)',
+            'kaufman_spelling' => 'word (source spelling)',
+            'practical_orthography' => 'word (practical orthography)',
+            'ipa_spelling' => 'word (ipa)',
             'spanish_definition' => 'spanish definition',
             'english_definition' => 'english definition',
             'part_of_speech' => 'part of speech',
@@ -74,13 +76,13 @@ class ImportMayalexCSV extends Command
 
         $this->info('>> Beginning import');
 
-        //\DB::beginTransaction();
+        // \DB::beginTransaction();
 
         $import_date = date('Ymd_His');
         $lex = LexLexicon::create([
-            'slug' => 'mayalex_' . $import_date,
-            'name' => 'MayaLex ' . $import_date,
-            'protolang_name' => "Proto-Mayan",
+            'slug' => 'mayalex_'.$import_date,
+            'name' => 'MayaLex '.$import_date,
+            'protolang_name' => 'Proto-Mayan',
             'viewer_lang_options' => 'en, es',
         ]);
         $this->lexicon_id = $lex->id;
@@ -118,7 +120,7 @@ class ImportMayalexCSV extends Command
         $fields = $fields_csv->getRecords();
         $field_map = [];
         foreach ($fields as $field) {
-            if (!$field['abbr']) {
+            if (! $field['abbr']) {
                 continue;
             }
             $abbr = $field['abbr'];
@@ -149,7 +151,7 @@ class ImportMayalexCSV extends Command
                 'lexicon_id' => $this->lexicon_id,
                 'code' => trim($pos_entry['Kaufman part of speech']),
             ], [
-                'display' => ['en'=>$pos_entry['english'], 'es'=>$pos_entry['spanish']],
+                'display' => ['en' => $pos_entry['english'], 'es' => $pos_entry['spanish']],
             ]);
         }
 
@@ -158,12 +160,13 @@ class ImportMayalexCSV extends Command
         $kaufman_csv->setHeaderOffset(0);
         $kaufman = $kaufman_csv->getRecords();
         $etyma_map = [];
-        $this->info(">> Importing Kaufman etyma");
+        $this->info('>> Importing Kaufman etyma');
         $bar = $this->output->createProgressBar(count($kaufman_csv));
         // copy kaufman etyma
         foreach ($kaufman as $entry) {
             if ($entry['etymon id']) {
                 $bar->advance();
+
                 continue;
             }
 
@@ -172,7 +175,7 @@ class ImportMayalexCSV extends Command
                 'entry' => $entry['word (practical orthography)'],
             ], [
                 'page_number' => $entry['page number'],
-                'gloss' => ['en'=>$entry['english definition'], 'es'=>$entry['spanish definition']],
+                'gloss' => ['en' => $entry['english definition'], 'es' => $entry['spanish definition']],
                 'order' => 1,
             ]);
             $etyma_map[$entry['id']] = $etyma->id;
@@ -185,7 +188,7 @@ class ImportMayalexCSV extends Command
                 ]);
             }
 
-            foreach ($etymonExtraDataKeys as $ed_key=>$ed_value) {
+            foreach ($etymonExtraDataKeys as $ed_key => $ed_value) {
                 LexEtymaExtraData::updateOrCreate([
                     'etyma_id' => $etyma->id,
                     'key' => $ed_key,
@@ -196,28 +199,30 @@ class ImportMayalexCSV extends Command
             $bar->advance();
         }
         $bar->finish();
-        $this->info("done!");
+        $this->info('done!');
 
         // copy kaufman reflexes
-        $this->info(">> Importing Kaufman reflexes");
+        $this->info('>> Importing Kaufman reflexes');
         $bar = $this->output->createProgressBar(count($kaufman_csv));
         foreach ($kaufman as $entry) {
-            if (!$entry['etymon id']) {
+            if (! $entry['etymon id']) {
                 $bar->advance();
+
                 continue;
             }
 
             $language_id = $this->createMissingLang($entry['language'], 'Other', 'Other');
-            $entries_0 = new \stdClass();
+            $entries_0 = new \stdClass;
             $entries_0->text = $entry['word (practical orthography)'];
-            $reflex = new LexReflex();
+            $reflex = new LexReflex;
             $reflex->language_id = $language_id;
-            $reflex->gloss = ['en'=>$entry['english definition'], 'es'=>$entry['spanish definition']];
+            $reflex->gloss = ['en' => $entry['english definition'], 'es' => $entry['spanish definition']];
             $reflex->entries = [$entries_0];
             $reflex->save();
             if ($entry['etymon id']) {
-                if (!array_key_exists($entry['etymon id'], $etyma_map)) {
+                if (! array_key_exists($entry['etymon id'], $etyma_map)) {
                     $this->warn('missing etyma id '.$entry['etymon id']);
+
                     continue;
                 }
                 LexEtymaReflex::updateOrCreate([
@@ -232,7 +237,7 @@ class ImportMayalexCSV extends Command
                     'order' => 1,
                 ]);
             }
-            foreach ($reflexExtraDataKeys as $ed_key=>$ed_value) {
+            foreach ($reflexExtraDataKeys as $ed_key => $ed_value) {
                 LexReflexExtraData::updateOrCreate([
                     'reflex_id' => $reflex->id,
                     'key' => $ed_key,
@@ -243,7 +248,7 @@ class ImportMayalexCSV extends Command
             $bar->advance();
         }
         $bar->finish();
-        $this->info("done!");
+        $this->info('done!');
 
         $import_lang_files = [
             'Mayalex Cholti.csv',
@@ -253,17 +258,17 @@ class ImportMayalexCSV extends Command
         ];
         foreach ($import_lang_files as $lang_file) {
             $this->info('>> Importing '.$lang_file);
-            $lang_csv = Reader::createFromPath("app/Console/Commands/import_data/".$lang_file, 'r');
+            $lang_csv = Reader::createFromPath('app/Console/Commands/import_data/'.$lang_file, 'r');
             $lang_csv->setHeaderOffset(0);
             $entries = $lang_csv->getRecords();
             $bar = $this->output->createProgressBar(count($lang_csv));
             foreach ($entries as $entry) {
                 $language_id = $this->createMissingLang($entry['language'], 'Other', 'Other');
-                $entries_0 = new \stdClass();
+                $entries_0 = new \stdClass;
                 $entries_0->text = $entry['word (practical orthography)'];
-                $reflex = new LexReflex();
+                $reflex = new LexReflex;
                 $reflex->language_id = $language_id;
-                $reflex->gloss = ['en'=>$entry['english definition'], 'es'=>$entry['spanish definition']];
+                $reflex->gloss = ['en' => $entry['english definition'], 'es' => $entry['spanish definition']];
                 $reflex->entries = [$entries_0];
                 $reflex->save();
                 if ($entry['etymon id']) {
@@ -290,16 +295,16 @@ class ImportMayalexCSV extends Command
                 $bar->advance();
             }
             $bar->finish();
-            $this->info("done!");
+            $this->info('done!');
         }
 
-        //\DB::commit();
-        $this->info(">> Successfully created Mayalex ".$import_date);
+        // \DB::commit();
+        $this->info('>> Successfully created Mayalex '.$import_date);
     }
 
     protected function createMissingLang($lang_name, $family_name, $subfamily_name): string
     {
-        if (!$subfamily_name) {
+        if (! $subfamily_name) {
             $subfamily_name = $family_name;
         }
         if (array_key_exists($lang_name, $this->lang_ids_lookup)) {
@@ -312,7 +317,7 @@ class ImportMayalexCSV extends Command
         $missing_family = LexLanguageFamily::whereRaw("JSON_EXTRACT(name, '$.en') = ?", $family_name)
             ->where('lexicon_id', $this->lexicon_id)
             ->first();
-        if (!$missing_family) {
+        if (! $missing_family) {
             $missing_family = LexLanguageFamily::create([
                 'lexicon_id' => $this->lexicon_id,
                 'name' => $family_name,
@@ -322,7 +327,7 @@ class ImportMayalexCSV extends Command
         $missing_subfamily = LexLanguageSubFamily::whereRaw("JSON_EXTRACT(name, '$.en') = ?", $subfamily_name)
             ->where('family_id', $missing_family->id)
             ->first();
-        if (!$missing_subfamily) {
+        if (! $missing_subfamily) {
             $missing_subfamily = LexLanguageSubFamily::create([
                 'family_id' => $missing_family->id,
                 'name' => $subfamily_name,
@@ -332,7 +337,7 @@ class ImportMayalexCSV extends Command
         $missing_lang = LexLanguage::whereRaw("JSON_EXTRACT(name, '$.en') = ?", $lang_name)
             ->where('sub_family_id', $missing_subfamily->id)
             ->first();
-        if (!$missing_lang) {
+        if (! $missing_lang) {
             $missing_lang = LexLanguage::create([
                 'sub_family_id' => $missing_subfamily->id,
                 'name' => $lang_name,
@@ -340,6 +345,7 @@ class ImportMayalexCSV extends Command
             ]);
         }
         $this->lang_ids_lookup[$lang_name] = $missing_lang->id;
+
         return $missing_lang->id;
     }
 }

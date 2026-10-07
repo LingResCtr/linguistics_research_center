@@ -22,10 +22,15 @@ class LexPartOfSpeechResource extends Resource
     protected static ?string $model = LexPartOfSpeech::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Parts of Speech';
+
     protected static ?int $navigationSort = 11;
+
     protected static ?string $pluralModelLabel = 'Parts of Speech';
+
     protected static ?string $label = 'Part of Speech';
 
     protected static ?string $recordTitleAttribute = 'code';

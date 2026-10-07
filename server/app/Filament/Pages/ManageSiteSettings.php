@@ -6,7 +6,6 @@ use App\Settings\SiteSettings;
 use BackedEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -14,8 +13,11 @@ use Filament\Support\Icons\Heroicon;
 class ManageSiteSettings extends SettingsPage
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+
     protected static string|null|\UnitEnum $navigationGroup = 'General';
+
     protected static ?string $navigationLabel = 'Settings';
+
     protected static ?int $navigationSort = 2;
 
     protected static string $settings = SiteSettings::class;
@@ -40,5 +42,4 @@ class ManageSiteSettings extends SettingsPage
     {
         return auth()->user()->can('manage_settings');
     }
-
 }

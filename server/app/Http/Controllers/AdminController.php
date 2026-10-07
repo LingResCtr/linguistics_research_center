@@ -15,7 +15,7 @@ class AdminController extends Controller
         return EieolElement::query()
             ->join('eieol_gloss', 'eieol_element.gloss_id', '=', 'eieol_gloss.id')
             ->where('eieol_gloss.language_id', $request->get('language_id'))
-            ->where('eieol_element.analysis', 'LIKE', '%' . $request->get('term') . '%')
+            ->where('eieol_element.analysis', 'LIKE', '%'.$request->get('term').'%')
             ->distinct()
             ->orderBy('eieol_element.analysis')
             ->pluck('eieol_element.analysis');
@@ -26,9 +26,9 @@ class AdminController extends Controller
         // Eloquent query that returns glosses starting with the supplied "gloss" parameter.
         $glosses = EieolGloss::with(['elements.head_word.language', 'language'])
             ->where('surface_form', 'LIKE', Normalizer::normalize(
-                    $request->get('gloss'),
-                    Normalizer::FORM_C
-                ) . '%')
+                $request->get('gloss'),
+                Normalizer::FORM_C
+            ).'%')
             ->where('language_id', $request->get('language'))
             ->orderBy('surface_form')
             ->take(15)
@@ -44,7 +44,7 @@ class AdminController extends Controller
         return EieolElement::query()
             ->join('eieol_gloss', 'eieol_element.gloss_id', '=', 'eieol_gloss.id')
             ->where('eieol_gloss.language_id', $request->get('language_id'))
-            ->where('eieol_element.part_of_speech', 'LIKE', '%' . $request->get('term') . '%')
+            ->where('eieol_element.part_of_speech', 'LIKE', '%'.$request->get('term').'%')
             ->orderBy('eieol_element.part_of_speech')
             ->distinct()
             ->limit(25)
@@ -56,10 +56,10 @@ class AdminController extends Controller
     {
         return EieolHeadWord::where('language_id', $request->get('language'))
             ->get()
-            ->map(fn($headword) => explode(',', $headword->keywords))
+            ->map(fn ($headword) => explode(',', $headword->keywords))
             ->flatten()
             ->unique()->values()
-            ->filter(fn($value) => $value) // non-null values only
+            ->filter(fn ($value) => $value) // non-null values only
             ->sort()->values();
     }
 
@@ -68,10 +68,10 @@ class AdminController extends Controller
         $head_words = EieolHeadWord::where(
             'word',
             'LIKE',
-            '%' . Normalizer::normalize(
+            '%'.Normalizer::normalize(
                 $request->get('head_word'),
                 Normalizer::FORM_C
-            ) . '%'
+            ).'%'
         )
             ->where('language_id', $request->get('language'))
             ->take(50)->orderBy('word')
@@ -79,7 +79,7 @@ class AdminController extends Controller
             ->get();
 
         return [
-            'headwords' => $head_words
+            'headwords' => $head_words,
         ];
     }
 }

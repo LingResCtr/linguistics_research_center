@@ -22,13 +22,17 @@ class LexSemanticFieldResource extends Resource
     protected static ?string $model = LexSemanticField::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Semantic Fields';
+
     protected static ?int $navigationSort = 10;
 
     protected static ?string $recordTitleAttribute = 'abbr';
 
     protected static ?string $pluralModelLabel = 'Semantic Fields';
+
     protected static ?string $label = 'Semantic Field';
 
     public static function form(Schema $schema): Schema

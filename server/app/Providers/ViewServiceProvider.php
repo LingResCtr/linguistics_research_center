@@ -23,16 +23,16 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Facades\View::composer('admin.layout', function(View $view) {
+        Facades\View::composer('admin.layout', function (View $view) {
             $issues = Issue::where('status', 'open');
             if (Auth::user()?->isAdmin()) {
                 $numOpenIssues = $issues->count();
             } else {
                 $serieses = Auth::user()->editableSeries->sortBy('order');
-                $issues = $issues->where(function($query) use ($serieses) {
+                $issues = $issues->where(function ($query) use ($serieses) {
                     foreach ($serieses as $series) {
                         foreach ($series->lessons as $lesson) {
-                            $query->orWhere('pointer', 'like', '/lesson/' . $lesson->id . '/%');
+                            $query->orWhere('pointer', 'like', '/lesson/'.$lesson->id.'/%');
                         }
                     }
                 });

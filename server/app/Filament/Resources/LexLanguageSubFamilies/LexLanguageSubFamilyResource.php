@@ -22,13 +22,17 @@ class LexLanguageSubFamilyResource extends Resource
     protected static ?string $model = LexLanguageSubFamily::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Language Sub-Families';
+
     protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $pluralModelLabel = 'Language Sub-Families';
+
     protected static ?string $label = 'Language Sub-family';
 
     public static function form(Schema $schema): Schema

@@ -16,24 +16,25 @@ use App\Http\Controllers\PublicEieolController;
 use App\Http\Controllers\PublicIELexController;
 use App\Http\Controllers\PublicLexiconController;
 use App\Http\Controllers\PublicPageController;
+use App\Models\EieolSeries;
 use App\Models\LexLanguage;
 use App\Models\LexSemanticField;
 
-Route::get('robots.txt', function() {
+Route::get('robots.txt', function () {
     if (config('app.env') === 'production') {
         return response(
-            "User-agent: *
-Disallow: /eieol_printable/"
+            'User-agent: *
+Disallow: /eieol_printable/'
         )->header('Content-Type', 'text/plain');
     } else {
         return response(
-            "User-agent: *
-Disallow: /"
+            'User-agent: *
+Disallow: /'
         )->header('Content-Type', 'text/plain');
     }
 });
 
-Route::controller(PublicPageController::class)->group(function() {
+Route::controller(PublicPageController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('index', 'index');
     Route::get('books', 'books');
@@ -43,7 +44,7 @@ Route::controller(PublicPageController::class)->group(function() {
     Route::get('lex', 'lex');
 });
 
-Route::controller(PublicBookController::class)->group(function() {
+Route::controller(PublicBookController::class)->group(function () {
     Route::get('books/{book_slug}', 'bookHome');
     Route::get('books/{book_slug}/{section_slug}', 'bookSection');
 });
@@ -53,19 +54,22 @@ Route::get('eieol_lesson/{series_id}', function ($series_id) {
     return redirect("eieol/$series_id", 301);
 });
 Route::get('eieol/{series_id}/{lesson_order}', function ($series_id, $lesson_order) {
-    $series_slug = \App\Models\EieolSeries::findOrFail($series_id)->slug;
+    $series_slug = EieolSeries::findOrFail($series_id)->slug;
+
     return redirect("eieol/$series_slug/$lesson_order", 301);
 })->whereNumber('series_id');
 Route::get('{prefix}/{series_id}', function ($prefix, $series_id) {
-    $series_slug = \App\Models\EieolSeries::findOrFail($series_id)->slug;
+    $series_slug = EieolSeries::findOrFail($series_id)->slug;
+
     return redirect("$prefix/$series_slug", 301);
 })->whereNumber('series_id')->whereIn('prefix', ['eieol', 'eieol_printable', 'eieol_toc']);
 Route::get('{prefix}/{series_id}/{language_id}', function ($prefix, $series_id, $language_id) {
-    $series_slug = \App\Models\EieolSeries::findOrFail($series_id)->slug;
+    $series_slug = EieolSeries::findOrFail($series_id)->slug;
+
     return redirect("$prefix/$series_slug/$language_id", 301);
 })->whereNumber('series_id')->whereIn('prefix', ['eieol_master_gloss', 'eieol_base_form_dictionary', 'eieol_english_meaning_index']);
 
-Route::controller(PublicEieolController::class)->group(function() {
+Route::controller(PublicEieolController::class)->group(function () {
     Route::get('eieol', 'eieol');
     Route::get('eieol/{series:slug}', 'eieol_first_lesson');
     Route::get('eieol/{series:slug}/{lesson_order}', 'eieol_lesson');
@@ -76,7 +80,7 @@ Route::controller(PublicEieolController::class)->group(function() {
     Route::get('eieol_english_meaning_index/{series:slug}/{language_id}', 'eieol_english_meaning_index');
 });
 
-Route::controller(PublicLexiconController::class)->group(function() {
+Route::controller(PublicLexiconController::class)->group(function () {
     Route::get('lexicon/{lex_slug}', 'index');
     Route::get('lexicon/{lex_slug}/switchlang/{lang}', 'switch_lang');
     Route::get('lexicon/{lex_slug}/etymon/{etymon_id}', 'etymon');
@@ -90,14 +94,14 @@ Route::controller(PublicLexiconController::class)->group(function() {
 });
 
 // IELex redirects
-Route::get('lex_pokorny', fn() => redirect('lex/master', 301));
-Route::get('lex_semantic_field/{field_id}', fn($field_id) => redirect('lex/semantic/field/' . LexSemanticField::findOrFail($field_id)->abbr, 301));
-Route::get('lex_reflex/{etyma_id}', fn() => redirect('lex/languages/', 301));
-Route::get('lex_semantic', fn() => redirect('lex/semantic/', 301));
-Route::get('lex_lang_reflexes/{language_id}', fn($language_id) => redirect('lex/languages/' . LexLanguage::findOrFail($language_id)->abbr, 301));;
-Route::get('lex_language', fn() => redirect('lex/languages/', 301));
+Route::get('lex_pokorny', fn () => redirect('lex/master', 301));
+Route::get('lex_semantic_field/{field_id}', fn ($field_id) => redirect('lex/semantic/field/'.LexSemanticField::findOrFail($field_id)->abbr, 301));
+Route::get('lex_reflex/{etyma_id}', fn () => redirect('lex/languages/', 301));
+Route::get('lex_semantic', fn () => redirect('lex/semantic/', 301));
+Route::get('lex_lang_reflexes/{language_id}', fn ($language_id) => redirect('lex/languages/'.LexLanguage::findOrFail($language_id)->abbr, 301));
+Route::get('lex_language', fn () => redirect('lex/languages/', 301));
 
-Route::controller(PublicIELexController::class)->group(function() {
+Route::controller(PublicIELexController::class)->group(function () {
     Route::get('lex/master', 'lex_pokorny');
     Route::get('lex/master/{pokorny_number}', 'lex_reflex');
     Route::get('lex/languages', 'lex_language');
@@ -107,14 +111,14 @@ Route::controller(PublicIELexController::class)->group(function() {
     Route::get('lex/semantic/field/{field_abbr}', 'lex_semantic_field');
 });
 
-Route::group(array('prefix'=> 'admin', 'middleware' => 'auth'), function() {
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::resource('/issue', IssueController::class);
     Route::resource('/issue_comment', IssueCommentController::class);
 });
 
-Route::group(array('prefix'=> 'admin2', 'middleware' => 'auth'), function() {
-    Route::get('/eieol_series', fn() => redirect('/admin'));
-    Route::get('/', fn() => redirect('/admin'));
+Route::group(['prefix' => 'admin2', 'middleware' => 'auth'], function () {
+    Route::get('/eieol_series', fn () => redirect('/admin'));
+    Route::get('/', fn () => redirect('/admin'));
 
     Route::resource('issues', IssueController::class);
 
@@ -141,6 +145,8 @@ Route::group(array('prefix'=> 'admin2', 'middleware' => 'auth'), function() {
     Route::post('/files/upload/tinymce', [FilesController::class, 'post_file_tinymce']);
 });
 
-Route::get('/home', function() { return redirect('/'); });
+Route::get('/home', function () {
+    return redirect('/');
+});
 
 Auth::routes(['register' => false]);

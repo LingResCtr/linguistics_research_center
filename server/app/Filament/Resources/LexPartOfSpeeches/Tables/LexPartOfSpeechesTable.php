@@ -20,7 +20,7 @@ class LexPartOfSpeechesTable
                 TextColumn::make('code')
                     ->searchable(),
                 TextColumn::make('display')
-                    ->searchable()
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -30,9 +30,9 @@ class LexPartOfSpeechesTable
                 EditAction::make(),
             ])
             ->toolbarActions([
-                //BulkActionGroup::make([
+                // BulkActionGroup::make([
                 //    DeleteBulkAction::make(),
-                //]),
+                // ]),
             ]);
     }
 }

@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('lex_lexicon', function(Blueprint $table) {
+        Schema::table('lex_lexicon', function (Blueprint $table) {
             $table->addColumn('text', 'description')->nullable();
         });
-        Schema::table('lex_language', function(Blueprint $table) {
+        Schema::table('lex_language', function (Blueprint $table) {
             $table->addColumn('text', 'description')->nullable();
         });
     }
@@ -28,10 +28,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('lex_lexicon', function(Blueprint $table) {
+        Schema::table('lex_lexicon', function (Blueprint $table) {
             $table->dropColumn('description');
         });
-        Schema::table('lex_language', function(Blueprint $table) {
+        Schema::table('lex_language', function (Blueprint $table) {
             $table->dropColumn('description');
         });
     }

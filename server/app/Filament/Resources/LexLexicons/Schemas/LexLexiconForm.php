@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\LexLexicons\Schemas;
 
 use App\Filament\Forms\Components\TinyMceRichText;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class LexLexiconForm

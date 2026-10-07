@@ -3,11 +3,10 @@
 namespace App\Filament\Resources\LexLanguages\Schemas;
 
 use App\Filament\Forms\Components\TinyMceRichText;
-use App\Models\LexLanguage;
 use App\Models\LexLanguageSubFamily;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class LexLanguageForm

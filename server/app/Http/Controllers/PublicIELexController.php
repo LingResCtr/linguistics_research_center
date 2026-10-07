@@ -20,8 +20,9 @@ class PublicIELexController extends Controller
             ->withCount('reflexes')
             ->orderBy('order')
             ->get();
+
         return view('lex_pokorny', [
-            'etymas' => $etymas
+            'etymas' => $etymas,
         ]);
     }
 
@@ -55,7 +56,7 @@ class PublicIELexController extends Controller
             ->get();
 
         return view('lex_language', [
-            'language_families' => $language_families
+            'language_families' => $language_families,
         ]);
     }
 
@@ -82,14 +83,14 @@ class PublicIELexController extends Controller
             ->with('etymas:id,old_id,entry,gloss,homograph_number')
             ->select(['id', 'language_id', 'lang_attribute', 'gloss', 'entries'])
             ->get()
-            ->filter(fn($reflex) => count($reflex->etymas) > 0);
+            ->filter(fn ($reflex) => count($reflex->etymas) > 0);
 
         $display_reflexes = [];
         foreach ($reflexes as $reflex) {
             $display_reflexes = array_merge($display_reflexes, $reflex->get_collatable_entries($alpha_weights));
-        } //foreach reflex
+        } // foreach reflex
 
-        //we have to use a string sort or it will think these are ints and shortest entries will come first
+        // we have to use a string sort or it will think these are ints and shortest entries will come first
         ksort($display_reflexes, flags: SORT_STRING);
 
         return view('lex_lang_reflexes', [
@@ -106,7 +107,7 @@ class PublicIELexController extends Controller
                 ->get(),
             'alpha_cats' => LexSemanticCategory::where('lexicon_id', self::IELEX_ID)
                 ->orderBy('text')
-                ->get()
+                ->get(),
         ]);
     }
 
@@ -125,7 +126,7 @@ class PublicIELexController extends Controller
         return view('lex_semantic_category', [
             'cat' => $category,
             'alpha_cats' => $alpha_cats,
-            'fields' => $fields
+            'fields' => $fields,
         ]);
     }
 
@@ -143,7 +144,7 @@ class PublicIELexController extends Controller
 
         return view('lex_semantic_field', [
             'field' => $field,
-            'alpha_cats' => $alpha_cats
+            'alpha_cats' => $alpha_cats,
         ]);
     }
 }

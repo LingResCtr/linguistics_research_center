@@ -59,7 +59,7 @@ class DataCacheStatus extends Page
                     } catch (\Throwable $e) {
                         Notification::make()
                             ->title('Failed to regenerate')
-                            ->body('An error occurred while attempting to regenerate the cache: ' . $e->getMessage())
+                            ->body('An error occurred while attempting to regenerate the cache: '.$e->getMessage())
                             ->danger()
                             ->send();
                     }

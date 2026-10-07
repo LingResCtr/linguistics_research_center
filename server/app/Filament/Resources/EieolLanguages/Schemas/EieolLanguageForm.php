@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\EieolLanguages\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -17,14 +17,14 @@ class EieolLanguageForm
                     ->default(null),
                 TextInput::make('lang_attribute')
                     ->default(null)
-                    ->helperText("This can be added to span tags in lessons that use this language - <span lang=\"xxx\">"),
+                    ->helperText('This can be added to span tags in lessons that use this language - <span lang="xxx">'),
                 Textarea::make('custom_keyboard_layout')
                     ->default(null)
                     ->helperText(new HtmlString("This should be a list of characters (either in unicode code points or pasted in) <br> Example: 'Â','Ä','Å','\u042f', '\u03da', '\u03db', '\u03c0' "))
                     ->columnSpanFull(),
                 Textarea::make('substitutions')
                     ->default(null)
-                    ->helperText(new HtmlString("This is used for sorting. If there are characters that should be treated differently when sorting, enter them here.<br>Separate substituions by commas. Use x>y notation.<br>Example: If you enter Ѽ>Отъ, the every occurrence of Ѽ will be replaced with Отъ before sorting.<br>Do not use unicode code points, just paste in unicode characters."))
+                    ->helperText(new HtmlString('This is used for sorting. If there are characters that should be treated differently when sorting, enter them here.<br>Separate substituions by commas. Use x>y notation.<br>Example: If you enter Ѽ>Отъ, the every occurrence of Ѽ will be replaced with Отъ before sorting.<br>Do not use unicode code points, just paste in unicode characters.'))
                     ->columnSpanFull(),
                 Textarea::make('custom_sort')
                     ->default(null)

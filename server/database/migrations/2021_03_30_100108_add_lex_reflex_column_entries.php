@@ -13,20 +13,20 @@ class AddLexReflexColumnEntries extends Migration
      */
     public function up()
     {
-        Schema::table('lex_reflex', function(Blueprint $table) {
+        Schema::table('lex_reflex', function (Blueprint $table) {
             $table->text('entries')->nullable();
         });
 
-        $reflexes = \DB::table('lex_reflex')->get();
+        $reflexes = DB::table('lex_reflex')->get();
         foreach ($reflexes as $reflex) {
-            $entries = \DB::table('lex_reflex_entry')
+            $entries = DB::table('lex_reflex_entry')
                 ->where('reflex_id', $reflex->id)
-                ->orderBy('order','ASC')
+                ->orderBy('order', 'ASC')
                 ->pluck('entry')
-                ->map(function($entry) {
-                    return (object)['text'=>$entry];
+                ->map(function ($entry) {
+                    return (object) ['text' => $entry];
                 })->toJson();
-            \DB::table('lex_reflex')
+            DB::table('lex_reflex')
                 ->where('id', $reflex->id)
                 ->update(['entries' => $entries]);
         }
@@ -39,7 +39,7 @@ class AddLexReflexColumnEntries extends Migration
      */
     public function down()
     {
-        Schema::table('lex_reflex', function(Blueprint $table) {
+        Schema::table('lex_reflex', function (Blueprint $table) {
             $table->dropColumn('entries');
         });
     }

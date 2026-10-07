@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\LexLexicons;
 
 use App\Filament\Resources\LexLexicons\Pages\CreateLexLexicon;
-use App\Filament\Resources\LexLexicons\Pages\EditLexLexicon;
 use App\Filament\Resources\LexLexicons\Pages\DataCacheStatus;
+use App\Filament\Resources\LexLexicons\Pages\EditLexLexicon;
 use App\Filament\Resources\LexLexicons\Pages\ListLexLexicons;
 use App\Filament\Resources\LexLexicons\Schemas\LexLexiconForm;
 use App\Filament\Resources\LexLexicons\Tables\LexLexiconsTable;
@@ -23,13 +23,17 @@ class LexLexiconResource extends Resource
     protected static ?string $model = LexLexicon::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Lexicon';
+
     protected static ?string $navigationLabel = 'Lexicons';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $pluralModelLabel = 'Lexicons';
+
     protected static ?string $label = 'Lexicon';
 
     public static function form(Schema $schema): Schema

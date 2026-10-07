@@ -7,7 +7,6 @@ use App\Models\EieolLanguage;
 use App\Models\EieolLesson;
 use App\Models\EieolSeries;
 use App\Models\Page;
-use Illuminate\Http\Request;
 
 class PublicEieolController extends Controller
 {
@@ -15,9 +14,9 @@ class PublicEieolController extends Controller
     {
         return view('eieol', [
             'content' => Page::whereSlug('eieol')->first()->content,
-            'serieses' => EieolSeries::where('published', '=', True)
+            'serieses' => EieolSeries::where('published', '=', true)
                 ->orderBy('order')
-                ->get()
+                ->get(),
         ]);
     }
 
@@ -43,8 +42,8 @@ class PublicEieolController extends Controller
 
         return view('eieol_lesson', [
             'series' => $series,
-            'printable' => False,
-            'clickable' => True,
+            'printable' => false,
+            'clickable' => true,
             'lesson' => $lesson,
             'nextLesson' => $next_lesson,
             'prevLesson' => $prev_lessson,
@@ -68,9 +67,9 @@ class PublicEieolController extends Controller
 
             $html .= view('eieol_lesson', [
                 'series' => $series,
-                'printable' => True,
-                'clickable' => False,
-                'lesson' => $lesson
+                'printable' => true,
+                'clickable' => false,
+                'lesson' => $lesson,
             ]);
         }
 
@@ -82,7 +81,7 @@ class PublicEieolController extends Controller
     public function eieol_toc(EieolSeries $series)
     {
         return view('eieol_toc', [
-            'series' => $series
+            'series' => $series,
         ]);
     }
 
@@ -101,14 +100,14 @@ class PublicEieolController extends Controller
         foreach ($lessons as $lesson) {
             foreach ($lesson->glossed_texts as $glossed_text) {
                 foreach ($glossed_text->glosses as $gloss) {
-                    //unique key is the surface form with all pos and analysis
+                    // unique key is the surface form with all pos and analysis
 
-                    $key = sha1($gloss->surface_form . ' -- '
-                        . $gloss->elements->map(function ($element) {
-                            return $element->part_of_speech . '; ' . $element->analysis . ':' . $element->head_word_id;
+                    $key = sha1($gloss->surface_form.' -- '
+                        .$gloss->elements->map(function ($element) {
+                            return $element->part_of_speech.'; '.$element->analysis.':'.$element->head_word_id;
                         })->implode(' + '));
 
-                    if (!isset($glosses[$key])) {
+                    if (! isset($glosses[$key])) {
                         $glosses[$key] = $gloss->toArray();
                         $glosses[$key]['surface_form'] = strip_tags($gloss->surface_form);
                         $glosses[$key]['gloss'] = $gloss;
@@ -121,7 +120,7 @@ class PublicEieolController extends Controller
             }
         }
 
-        array_walk($glosses, fn(&$value) => $value['sortable_key'] = \Normalizer::normalize($value['surface_form'], \Normalizer::FORM_D)
+        array_walk($glosses, fn (&$value) => $value['sortable_key'] = \Normalizer::normalize($value['surface_form'], \Normalizer::FORM_D)
         );
         $sorter = new AlphabetSorter($language->substitutions, $language->custom_sort);
         uasort($glosses, [$sorter, 'alphabet_sorter']);
@@ -149,19 +148,19 @@ class PublicEieolController extends Controller
             foreach ($lesson->glossed_texts as $glossed_text) {
                 foreach ($glossed_text->glosses as $gloss) {
                     foreach ($gloss->elements as $element) {
-                        //unique key is head word plus definition
+                        // unique key is head word plus definition
 
-                        $key = $element->head_word->word . ' -- ' . $element->head_word->definition;
-                        //remove first character, because it's a '<'
-                        $key = mb_substr($key, 1, Null, 'UTF-8');
-                        //remove any tags like sup or sub
+                        $key = $element->head_word->word.' -- '.$element->head_word->definition;
+                        // remove first character, because it's a '<'
+                        $key = mb_substr($key, 1, null, 'UTF-8');
+                        // remove any tags like sup or sub
                         $key = strip_tags($key);
 
-                        if (!isset($head_words[$key])) {
-                            //build sort key
-                            //remove first character, because it's a '<
-                            $sort_key = mb_substr($element->head_word->word, 1, Null, 'UTF-8');
-                            //remove any tags like sup or sub
+                        if (! isset($head_words[$key])) {
+                            // build sort key
+                            // remove first character, because it's a '<
+                            $sort_key = mb_substr($element->head_word->word, 1, null, 'UTF-8');
+                            // remove any tags like sup or sub
                             $sort_key = strip_tags($sort_key);
                             $sort_key = \Normalizer::normalize($sort_key, \Normalizer::FORM_D);
 
@@ -202,14 +201,14 @@ class PublicEieolController extends Controller
             ->orderBy('order')
             ->get();
 
-        //loop through all the lessons, glossed texts and glosses to group like keywords
+        // loop through all the lessons, glossed texts and glosses to group like keywords
 
         foreach ($lessons as $lesson) {
             foreach ($lesson->glossed_texts as $glossed_text) {
                 foreach ($glossed_text->glosses as $gloss) {
                     foreach ($gloss->elements as $element) {
 
-                        if (!$element->head_word->keywords) {
+                        if (! $element->head_word->keywords) {
                             continue;
                         }
 
@@ -220,7 +219,7 @@ class PublicEieolController extends Controller
                             $keywords[$key] = $keywords[$key] ?? [
                                 'keyword' => $keyword,
                                 'head_word' => $element->head_word,
-                                'glossed_text_gloss_ids' => []
+                                'glossed_text_gloss_ids' => [],
                             ];
 
                             $keywords[$key]['glossed_text_gloss_ids'][$gloss->id] = $lesson;

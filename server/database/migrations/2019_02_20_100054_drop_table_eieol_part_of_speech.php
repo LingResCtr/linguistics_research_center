@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class DropTableEieolPartOfSpeech extends Migration
 {
@@ -23,7 +23,7 @@ class DropTableEieolPartOfSpeech extends Migration
      */
     public function down()
     {
-        Schema::create('eieol_part_of_speech', function(Blueprint $table) {
+        Schema::create('eieol_part_of_speech', function (Blueprint $table) {
             $table->increments('id');
             $table->string('part_of_speech', 191)->nullable()->index('part_of_speech_part_of_speech_index');
             $table->integer('language_id')->unsigned()->index('eieol_part_of_speech_language_id_foreign');
