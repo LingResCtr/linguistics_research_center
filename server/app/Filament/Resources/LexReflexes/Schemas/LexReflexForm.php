@@ -28,6 +28,7 @@ class LexReflexForm
                     ->columnSpanFull(),
                 Select::make('language_id')
                     ->relationship('language', 'name')
+                    ->required()
                     ->live()
                     ->columnSpanFull(),
                 TextInput::make('lang_attribute')
@@ -45,7 +46,7 @@ class LexReflexForm
                         Select::make('source_id')
                             ->label('Source')
                             ->options(function (Get $get) {
-                                $language = LexLanguage::find($get('../../language'));
+                                $language = LexLanguage::find($get('../../language_id'));
                                 $lex = $language?->language_sub_family?->language_family?->lexicon;
 
                                 $query = LexSource::query()
@@ -65,7 +66,8 @@ class LexReflexForm
                         TextInput::make('page_number')
                             ->label('Page Number'),
                         Textarea::make('original_text')
-                            ->label('Original Text'),
+                            ->label('Original Text')
+                            ->required(),
                     ])
                     ->columnSpanFull(),
                 Repeater::make('entries')
