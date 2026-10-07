@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Spatie\Translatable\HasTranslations;
 
 class LexPartOfSpeech extends Model
 {
-
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_part_of_speech';
@@ -31,10 +32,11 @@ class LexPartOfSpeech extends Model
     public static function posLookup()
     {
         $all_pos = LexPartOfSpeech::all();
-        $pos_lookup = array();
+        $pos_lookup = [];
         foreach ($all_pos as $pos) {
             $pos_lookup[$pos->code] = $pos->display;
         }
+
         return $pos_lookup;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,11 +11,13 @@ use Spatie\Translatable\HasTranslations;
 
 class LexEtyma extends Model
 {
-
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_etyma';
+
     protected $guarded = ['id'];
+
     protected $translatable = ['gloss'];
 
     protected $appends = ['lexiconNameEntry', 'lexiconNameEntryGloss'];
@@ -56,31 +59,32 @@ class LexEtyma extends Model
 
     public function getPOSes()
     {
-        //build list of parts of speech used by these reflexes.  This is a little more complicate.
-        //A single pos might be made up of several.  So we buld a lookup list first.
-        //then we break up the used pos and lookup each part.
+        // build list of parts of speech used by these reflexes.  This is a little more complicate.
+        // A single pos might be made up of several.  So we buld a lookup list first.
+        // then we break up the used pos and lookup each part.
         $pos_lookup = LexPartOfSpeech::posLookup();
 
-        $poses = array();
+        $poses = [];
         foreach ($this->reflexes->pluck('parts_of_speech')->flatten() as $pos) {
             $sub_poses = explode('.', $pos->text);
             foreach ($sub_poses as $sub_pos) {
-                if (!array_key_exists($sub_pos, $poses) && array_key_exists($sub_pos, $pos_lookup)) {
+                if (! array_key_exists($sub_pos, $poses) && array_key_exists($sub_pos, $pos_lookup)) {
                     $poses[$sub_pos] = $pos_lookup[$sub_pos];
                 }
             }
         }
         ksort($poses);
+
         return $poses;
     }
 
     public function getLexiconNameEntryAttribute()
     {
-        return $this->lexicon->name . ': ' . $this->entry;
+        return $this->lexicon->name.': '.$this->entry;
     }
 
     public function getLexiconNameEntryGlossAttribute()
     {
-        return $this->lexicon->name . ': ' . $this->entry . ' (' . $this->gloss . ')';
+        return $this->lexicon->name.': '.$this->entry.' ('.$this->gloss.')';
     }
 }

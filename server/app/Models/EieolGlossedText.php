@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EieolGlossedText extends Model
 {
+    use HasFactory;
 
     protected $table = 'eieol_glossed_text';
+
     protected $casts = [
-        'custom_gloss_mapping' => 'array'
+        'custom_gloss_mapping' => 'array',
     ];
 
     public function lesson(): BelongsTo
@@ -32,21 +35,21 @@ class EieolGlossedText extends Model
             return $this->apply_custom_gloss_mapping();
         }
 
-        //this makes a new version of the glossed text with span tags for each gloss.
-        //Then you can make them clickable so they toggle the gloss.
+        // this makes a new version of the glossed text with span tags for each gloss.
+        // Then you can make them clickable so they toggle the gloss.
 
         $text = $this->glossed_text;
 
-        $text = str_replace("\r", " ", $text);
-        $text = str_replace("\n", " ", $text);
-        $text = str_replace("<br/>", " <br/> ", $text);
-        $text = str_replace("<br />", " <br /> ", $text);
-        $text = str_replace("<br>", " <br> ", $text);
-        $text = str_replace("<p>", " <p> ", $text);
-        $text = str_replace("</p>", " </p> ", $text);
+        $text = str_replace("\r", ' ', $text);
+        $text = str_replace("\n", ' ', $text);
+        $text = str_replace('<br/>', ' <br/> ', $text);
+        $text = str_replace('<br />', ' <br /> ', $text);
+        $text = str_replace('<br>', ' <br> ', $text);
+        $text = str_replace('<p>', ' <p> ', $text);
+        $text = str_replace('</p>', ' </p> ', $text);
 
-        $clickable_text = $this->makeClickable($text, "surface_form");
-        $clickable_text = $this->makeClickable($clickable_text, "underlying_form");
+        $clickable_text = $this->makeClickable($text, 'surface_form');
+        $clickable_text = $this->makeClickable($clickable_text, 'underlying_form');
 
         return $clickable_text;
 
@@ -60,17 +63,17 @@ class EieolGlossedText extends Model
         foreach ($this->glosses as $g) {
             $form = $g->$f;
             $id = $g->id;
-            if (!($form && $id)) {
+            if (! ($form && $id)) {
                 continue;
             }
 
             $posn = mb_stripos($str, $form, $str_posn);
-            if ($posn === FALSE) {
+            if ($posn === false) {
                 continue;
             }
             $text_matched = mb_substr($str, $posn, mb_strlen($form));
-            $replacement = '<a href="#" onclick="return false;" class="click_gloss" data-gloss-ids="[' . $id . ']">' . $text_matched . '</a>';
-            $str = mb_substr($str, 0, $posn) . $replacement . mb_substr($str, $posn + mb_strlen($form));
+            $replacement = '<a href="#" onclick="return false;" class="click_gloss" data-gloss-ids="['.$id.']">'.$text_matched.'</a>';
+            $str = mb_substr($str, 0, $posn).$replacement.mb_substr($str, $posn + mb_strlen($form));
             $str_posn = $posn + mb_strlen($replacement);
         }
 
@@ -80,7 +83,7 @@ class EieolGlossedText extends Model
 
     protected function has_custom_gloss_mapping()
     {
-        if (!$this->custom_gloss_mapping) {
+        if (! $this->custom_gloss_mapping) {
             return false;
         }
         foreach (array_values($this->custom_gloss_mapping) as $val) {
@@ -88,35 +91,36 @@ class EieolGlossedText extends Model
                 return true;
             }
         }
+
         return false;
     }
 
     protected function apply_custom_gloss_mapping()
     {
-        $result = "";
+        $result = '';
         $old_mapped_glosses = [];
         foreach (mb_str_split($this->glossed_text) as $ix => $chr) {
             $current_mapped_glosses = [];
             foreach ($this->custom_gloss_mapping as $gloss_id => $posns) {
                 if (in_array($ix, $posns)) {
-                    $current_mapped_glosses [] = $gloss_id;
+                    $current_mapped_glosses[] = $gloss_id;
                 }
             }
             if ($old_mapped_glosses != $current_mapped_glosses) {
                 if ($old_mapped_glosses) {
-                    $result .= "</a>";
+                    $result .= '</a>';
                 }
                 if ($current_mapped_glosses) {
-                    $result .= "<a href=\"#\" onclick=\"return false;\" class=\"click_gloss\" data-gloss-ids=\"" . json_encode($current_mapped_glosses) . "\">";
+                    $result .= '<a href="#" onclick="return false;" class="click_gloss" data-gloss-ids="'.json_encode($current_mapped_glosses).'">';
                 }
             }
             $old_mapped_glosses = $current_mapped_glosses;
             $result .= $chr;
         }
         if ($old_mapped_glosses) {
-            $result .= "</a>";
+            $result .= '</a>';
         }
+
         return $result;
     }
-
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EieolSeries extends Model
 {
+    use HasFactory;
 
     protected $table = 'eieol_series';
 
@@ -31,7 +32,7 @@ class EieolSeries extends Model
 
     public function getBibliographyLesson()
     {
-        return Models\EieolLesson::where('series_id', $this->id)
+        return EieolLesson::where('series_id', $this->id)
             ->where('title', 'like', '%Bibliography%')
             ->first();
     }

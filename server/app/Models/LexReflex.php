@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
-
 class LexReflex extends Model
 {
-
+    use HasFactory;
     use HasTranslations;
 
     protected $table = 'lex_reflex';
+
     protected $guarded = ['id'];
+
     protected $translatable = ['gloss'];
 
     protected $casts = [
@@ -83,8 +85,8 @@ class LexReflex extends Model
 
     private static function split_entries($entry)
     {
-        //entries might have some characters in ().  This means the entry is actually 2 entries, eg: Farv(e) would be Farv and Farve.
-        //it is possible for an entry to have multiple parens, in which case we call this routine recursively.
+        // entries might have some characters in ().  This means the entry is actually 2 entries, eg: Farv(e) would be Farv and Farve.
+        // it is possible for an entry to have multiple parens, in which case we call this routine recursively.
         $open = mb_strpos($entry, '(', 0, 'UTF-8');
         $close = mb_strpos($entry, ')', 0, 'UTF-8');
         $first = mb_substr($entry, 0, $open, 'UTF-8');
@@ -95,10 +97,10 @@ class LexReflex extends Model
         $len = mb_strlen($entry, 'UTF-8') - $close;
         $last = mb_substr($entry, $close + 1, $len, 'UTF-8');
 
-        $short = $first . $last;
-        $long = $first . $middle . $last;
+        $short = $first.$last;
+        $long = $first.$middle.$last;
 
-        $keys = array();
+        $keys = [];
 
         if (mb_strpos($short, '(', 0, 'UTF-8') === false) {
             $keys[] = $short;
@@ -117,38 +119,39 @@ class LexReflex extends Model
 
     private static function hashKey($key, $alpha_weights)
     {
-        //convert the key reflex to a series of numbers based on the weighted alphabet array for easy sorting.
+        // convert the key reflex to a series of numbers based on the weighted alphabet array for easy sorting.
 
-        //break string into an array
+        // break string into an array
         $key_array = preg_split('//u', $key, -1, PREG_SPLIT_NO_EMPTY);
 
-        //build a hash of entry using weights.  So ab would become something like 00010002
+        // build a hash of entry using weights.  So ab would become something like 00010002
         $key_parts = array_map(function ($key_char) use ($alpha_weights) {
-            //these characters will not be used when sorting the keys of the array
-            $the_unwanted = ["-", "*", "'"];
-            if (in_array($key_char, $the_unwanted)) { //remove any unwanted characters
+            // these characters will not be used when sorting the keys of the array
+            $the_unwanted = ['-', '*', "'"];
+            if (in_array($key_char, $the_unwanted)) { // remove any unwanted characters
                 return '';
             }
             if (array_key_exists($key_char, $alpha_weights)) {
                 return str_pad($alpha_weights[$key_char], 4, '0', STR_PAD_LEFT);
             }
 
-            return '0000'; //unknown characters become 0000 so they show up first
+            return '0000'; // unknown characters become 0000 so they show up first
         }, $key_array);
 
-        //Tack the original entry on to the end.  This way the keys remain unique even if it had unwanted chars, but the ending isn't really used for sorting
-        return implode('', $key_parts) . $key;
+        // Tack the original entry on to the end.  This way the keys remain unique even if it had unwanted chars, but the ending isn't really used for sorting
+        return implode('', $key_parts).$key;
     }
 
     public function getLangAbbrGlossAttribute()
     {
-        return $this->lang_attribute . ': ' . $this->gloss;
+        return $this->lang_attribute.': '.$this->gloss;
     }
 
     public function getLangNameEntriesGlossAttribute()
     {
         $entries_csv = collect($this->entries)->pluck('text')->join(', ');
-        return $this->language->name . ': ' . $entries_csv . ' (' . $this->gloss . ')';
+
+        return $this->language->name.': '.$entries_csv.' ('.$this->gloss.')';
     }
 
     public function etymaSemanticTags()
@@ -170,7 +173,7 @@ class LexReflex extends Model
     {
         return collect($this->entries)
             ->pluck('text')
-            ->map(fn($text) => strip_tags($text))
+            ->map(fn ($text) => strip_tags($text))
             ->join(', ');
     }
 
@@ -178,11 +181,11 @@ class LexReflex extends Model
     {
         $these_reflexes = [];
         foreach ($this->entries as $entry) {
-            //special processing based on whether or not the entry has a ( in it
+            // special processing based on whether or not the entry has a ( in it
             $lacks_separator = mb_strpos($entry['text'], '(', 0, 'UTF-8') === false;
             $keys = $lacks_separator ? [$entry['text']] : LexReflex::split_entries($entry['text']);
             foreach ($keys as $key) {
-                $etymas = $this->etymas->map(fn($etyma) => [
+                $etymas = $this->etymas->map(fn ($etyma) => [
                     'entry' => $etyma->entry,
                     'gloss' => $etyma->gloss,
                     'id' => $etyma->old_id,
@@ -194,10 +197,11 @@ class LexReflex extends Model
                     'id' => $this->id,
                     'reflex' => $key,
                     'lang_attribute' => $this->lang_attribute,
-                    'etymas' => $etymas
+                    'etymas' => $etymas,
                 ];
             }
         }
+
         return $these_reflexes;
     }
 }

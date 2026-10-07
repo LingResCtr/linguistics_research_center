@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LexSource extends Model
 {
+    use HasFactory;
 
     protected $table = 'lex_source';
 
@@ -27,14 +29,14 @@ class LexSource extends Model
     protected function lexiconNameCode(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => $this->lexicon->name . ': ' . $this->code
+            get: fn (mixed $value, array $attributes) => $this->lexicon->name.': '.$this->code
         );
     }
 
     protected function lexiconNameCodeTitle(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => $this->lexicon->name . ': ' . $this->code . ' (' . $this->display . ')'
+            get: fn (mixed $value, array $attributes) => $this->lexicon->name.': '.$this->code.' ('.$this->display.')'
         );
     }
 }
