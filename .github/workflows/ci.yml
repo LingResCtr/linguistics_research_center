@@ -29,7 +29,10 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------------
-  # Secret scan over the full history of the PR. Blocking.
+  # Secret scan with gitleaks, using the repository's .gitleaks.toml (same as
+  # `make secret-scan`). Runs the gitleaks container directly: the marketplace
+  # action needs a paid licence for organisation-owned repositories. Pull requests
+  # scan the commits they add; pushes to master scan the full history. Blocking.
   # ---------------------------------------------------------------------------------
   secret-scan:
     name: Secret scan (gitleaks)
@@ -41,10 +44,17 @@ jobs:
           fetch-depth: 0
 
       - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$BASE_SHA" ]; then
+            LOG_OPTS="$BASE_SHA..HEAD"
+          else
+            LOG_OPTS="--all"
+          fi
+          docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.21.2 \
+            detect --source=/repo --config=/repo/.gitleaks.toml \
+            --log-opts="$LOG_OPTS" --no-banner --redact --exit-code 1
 
   # ---------------------------------------------------------------------------------
   # PHP test suite against a real MariaDB with the production collation. The app relies
@@ -165,7 +175,7 @@ jobs:
         run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress --error-format=github
 
   # ---------------------------------------------------------------------------------
-  # Frontend build (Vite). Blocking.
+  # Frontend build (Vite) after a production Composer install. Blocking.
   # ---------------------------------------------------------------------------------
   frontend-build:
     name: Frontend build
@@ -176,6 +186,26 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      # The Filament theme stylesheet imports from vendor/filament, so Composer
+      # dependencies must exist before Vite runs (the Dockerfile does the same).
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: dom, intl, libxml, mbstring, gd, zip, bcmath
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('server/composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Install Composer dependencies (no dev, no scripts)
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts
 
       - name: Set up Node
         uses: actions/setup-node@v4
