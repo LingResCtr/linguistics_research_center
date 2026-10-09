@@ -46,9 +46,9 @@ This is the step-by-step procedure for getting the LRC platform running on a dev
 ```
 make test
 ```
-(raw: `docker compose exec -u www-data -e DB_DATABASE=lrc_test web php artisan test`)
+(raw: `docker compose exec -u www-data -e APP_ENV=testing -e CACHE_STORE=array -e SESSION_DRIVER=array -e DB_DATABASE=lrc_test web php artisan test`)
 
-Tests run against a separate `lrc_test` database inside the `db` container, which `make test` creates and grants on first use. They never touch the `lrc` development database, so `RefreshDatabase` in a test is safe. Filter with `make test ARGS="--filter SomeTest"`.
+Tests run against a separate `lrc_test` database inside the `db` container, which `make test` creates and grants on first use. They never touch the `lrc` development database, so `RefreshDatabase` in a test is safe. The target also sets `APP_ENV=testing` and the array cache and session drivers, because the container's own environment from `compose.yaml` would otherwise override `phpunit.xml` and tests would run as `local`, unlike in CI. Filter with `make test ARGS="--filter SomeTest"`.
 
 ## Logging in to `/admin`
 

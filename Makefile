@@ -110,8 +110,10 @@ test-db: ## Create the separate test database (lrc_test) so tests never touch th
 
 test: test-db ## Run the test suite against the lrc_test database: make test ARGS="--filter Foo"
 	@# An empty .env silences a vendor solution-provider warning; real config comes from compose env vars.
+	@# compose.yaml's APP_ENV, CACHE_STORE and SESSION_DRIVER would otherwise win over phpunit.xml's <env>
+	@# values, so tests would run as "local" (CSRF enforced, database cache) unlike in CI.
 	@test -f $(SERVER_DIR)/.env || touch $(SERVER_DIR)/.env
-	$(COMPOSE) exec -u $(APP_USER) -e DB_DATABASE=$(TEST_DB) web php artisan test $(ARGS)
+	$(COMPOSE) exec -u $(APP_USER) -e APP_ENV=testing -e CACHE_STORE=array -e SESSION_DRIVER=array -e DB_DATABASE=$(TEST_DB) web php artisan test $(ARGS)
 
 lint: ## Style check plus static analysis on the whole tree (what CI runs): make lint
 	$(MAKE) pint ARGS="--test"
