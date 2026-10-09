@@ -1,6 +1,6 @@
 # The lexicon data cache
 
-Last verified: 2026-09-16 against commit c0fde76.
+Last verified: 2026-10-09 against commit b6e8455.
 
 `lex_lexicon_data_cache` is a denormalized, per-reflex, per-viewer-locale snapshot of everything the public "Data" page (`/lexicon/{slug}/data`) and its DataTables AJAX endpoint (`/api/v1/lexicon/{slug}/data`) need to display, search, filter and sort a lexicon without joining across `lex_reflex`, `lex_etyma`, `lex_reflex_extra_data`, `lex_reflex_part_of_speech` and friends on every request. It is not a framework-level cache (there is no `Cache::` facade use anywhere in the codebase); it is an ordinary table that a console command populates and the public controller reads with plain query-builder calls.
 
@@ -39,6 +39,8 @@ Each reflex triggers several lazy-loaded relations (`parts_of_speech`, `etyma` a
 `app/Http/Controllers/PublicLexiconController.php`:
 - `data($lexicon_slug)` just renders the `lexicon/lex_data` Blade view, which wires up a DataTables instance pointed at the AJAX endpoint.
 - `ajaxData($lex_slug)` is the DataTables server-side handler. It reads the current viewer locale from `Session::get('viewer_lang_code', 'en')` and issues three separate queries against `lex_lexicon_data_cache` filtered to `(lexicon_id, content_lang_code)`: a total count, a filtered/sorted/paginated `get()`, and a filtered count for `recordsFiltered`. Column search, the global search box, and sorting all compile directly from the request's `columns`/`search`/`order` parameters into the query. Input handling on this endpoint is covered in the private security review.
+
+Requests to the data endpoint are validated by `server/app/Http/Requests/LexiconDataRequest.php` (shapes, lengths, a 100-row page cap, `asc`/`desc` only) and executed by `server/app/Services/Lexicon/DataTableQuery.php`, which accepts only the lexicon's own data columns for searching and ordering, applies defaults when DataTables parameters are absent, and treats the DataTables `regex` flag as a boolean. A search expression the database cannot evaluate (for example an unbalanced regular expression) returns HTTP 422 with an `error` field rather than a server error.
 
 ## When it goes stale
 
