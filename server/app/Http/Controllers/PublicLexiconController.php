@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LexiconDataRequest;
 use App\Models\LexEtyma;
 use App\Models\LexLanguage;
 use App\Models\LexLexicon;
 use App\Models\LexReflex;
 use App\Models\LexSemanticField;
 use App\Models\Page;
-use Illuminate\Database\Query\Builder;
+use App\Services\Lexicon\DataTableQuery;
+use Illuminate\Database\QueryException;
+use InvalidArgumentException;
 use Session;
 
 class PublicLexiconController extends Controller
@@ -157,74 +160,20 @@ class PublicLexiconController extends Controller
             ])->firstOrFail();
     }
 
-    public function ajaxData($lex_slug)
+    public function ajaxData(LexiconDataRequest $request, $lex_slug)
     {
-        $start = request()->integer('start');
-        $length = request()->integer('length', 10);
-        if ($length > 100) {
-            $length = 100;
-        }
-
         $lex = LexLexicon::where('slug', $lex_slug)->firstOrFail();
-        $viewer_locale = Session::get('viewer_lang_code', 'en');
+        $query = new DataTableQuery($lex, Session::get('viewer_lang_code', 'en'));
 
-        $reflex_count = \DB::table('lex_lexicon_data_cache')
-            ->where('lexicon_id', $lex->id)
-            ->where('content_lang_code', $viewer_locale)
-            ->count();
-
-        $filtered_reflexes = \DB::table('lex_lexicon_data_cache')
-            ->where('lexicon_id', $lex->id)
-            ->where('content_lang_code', $viewer_locale);
-
-        $columns = request()->input('columns');
-        foreach ($columns as $column) {
-            if ($column['search']['value']) {
-                if ($column['search']['regex']) {
-                    $filtered_reflexes = $filtered_reflexes->where('data->'.$column['name'], 'REGEXP', $column['search']['value']);
-                } else {
-                    $filtered_reflexes = $filtered_reflexes->where('data->'.$column['name'], 'LIKE', '%'.$column['search']['value'].'%');
-                }
-            }
+        try {
+            return response()->json($query->run($request->validated()));
+        } catch (InvalidArgumentException $e) {
+            return response()->json(['draw' => (int) $request->input('draw', 0), 'error' => $e->getMessage()], 422);
+        } catch (QueryException) {
+            return response()->json([
+                'draw' => (int) $request->input('draw', 0),
+                'error' => 'The search expression could not be evaluated.',
+            ], 422);
         }
-
-        $search = request()->input('search');
-        if ($search['value']) {
-            $filtered_reflexes = $filtered_reflexes->where(function (Builder $q) use ($columns, $search) {
-                foreach ($columns as $column) {
-                    if ($search['regex']) {
-                        $q = $q->orWhere('data->'.$column['name'], 'REGEXP', $search['value']);
-                    } else {
-                        $q = $q->orWhere('data->'.$column['name'], 'LIKE', '%'.$search['value'].'%');
-                    }
-                }
-            });
-        }
-
-        $order = request()->input('order');
-        if ($order) {
-            $order_by_key = $order[0]['name'];
-            $order_by_dir = $order[0]['dir'];
-            $filtered_reflexes->orderBy('data->'.$order_by_key, $order_by_dir);
-        }
-
-        $filtered_reflexes_count = $filtered_reflexes->count();
-        $data = $filtered_reflexes
-            ->skip($start)
-            ->limit($length)
-            ->get()
-            ->map(function ($r) {
-                $d = json_decode($r->data);
-                $d->id = $r->reflex_id;
-
-                return $d;
-            });
-
-        return (object) [
-            'draw' => (int) request()->input('draw'),
-            'recordsTotal' => $reflex_count,
-            'recordsFiltered' => $filtered_reflexes_count,
-            'data' => $data,
-        ];
     }
 }
