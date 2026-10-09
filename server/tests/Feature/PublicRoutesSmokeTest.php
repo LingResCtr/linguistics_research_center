@@ -6,10 +6,10 @@ use App\Models\Book;
 use App\Models\EieolSeries;
 use App\Models\LexEtyma;
 use App\Models\LexLanguage;
+use App\Models\LexLexicon;
 use App\Models\LexReflex;
 use App\Models\LexSemanticField;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Tests\Feature\Concerns\FixtureLexiconTestHelpers;
 use Tests\TestCase;
 
@@ -18,23 +18,6 @@ use Tests\TestCase;
  * is asserted to return 200 using ids/slugs from the "fixturelex" fixture,
  * except where the route's own correct behaviour is a redirect, in which
  * case that redirect is asserted instead with a comment explaining why.
- *
- * FIXME: resources/views/lexicon/layout-etym.blade.php and layout-dict.blade.php
- * each declare a named top-level PHP function inside an @php block
- * (sortSidebarItemsByEntry() / sortSidebarItemsByEntries()). Laravel's view
- * engine `require`s (not `require_once`s) the compiled view file, so a
- * second render of a view extending the same layout, in the same PHP
- * process, hits an uncatchable "Cannot redeclare function" fatal error and
- * kills the whole process -- confirmed by reproducing it with two plain
- * requests to the same etymon route in one test. That means any two of
- * {etymon, field, language/protolanguage} (layout-etym) or any two of
- * {word, language/{id}} (layout-dict) rendered anywhere in one `php artisan
- * test` run will crash the entire suite, not just fail one assertion. This
- * is a real bug in those four templates (production Apache workers that
- * serve more than one such page will hit it too), not a fixture problem, so
- * per the task brief every test below that renders one of these two
- * layouts runs in its own process via #[RunInSeparateProcess] rather than
- * being skipped.
  */
 class PublicRoutesSmokeTest extends TestCase
 {
@@ -126,31 +109,26 @@ class PublicRoutesSmokeTest extends TestCase
         $this->get('/lexicon/fixturelex')->assertOk();
     }
 
-    #[RunInSeparateProcess]
     public function test_lexicon_protolanguage_home(): void
     {
         $this->get('/lexicon/fixturelex/language/protolanguage')->assertOk();
     }
 
-    #[RunInSeparateProcess]
     public function test_lexicon_language_home(): void
     {
         $this->get("/lexicon/fixturelex/language/{$this->oldEnglish->id}")->assertOk();
     }
 
-    #[RunInSeparateProcess]
     public function test_lexicon_etymon(): void
     {
         $this->get("/lexicon/fixturelex/etymon/{$this->fatherEtymon->id}")->assertOk();
     }
 
-    #[RunInSeparateProcess]
     public function test_lexicon_word(): void
     {
         $this->get("/lexicon/fixturelex/word/{$this->fatherReflex->id}")->assertOk();
     }
 
-    #[RunInSeparateProcess]
     public function test_lexicon_field(): void
     {
         $this->get("/lexicon/fixturelex/field/{$this->parentTerms->id}")->assertOk();
@@ -196,5 +174,24 @@ class PublicRoutesSmokeTest extends TestCase
     public function test_admin_login_page(): void
     {
         $this->get('/admin/login')->assertOk();
+    }
+
+    /**
+     * The etymon and word layouts used to declare named PHP functions inside
+     *
+     * @php blocks, so rendering the same layout twice in one PHP process died
+     * with "Cannot redeclare function". Sorting now lives in
+     * App\Services\Lexicon\SidebarSorter; this guards against a regression.
+     */
+    public function test_lexicon_layouts_can_be_rendered_twice_in_one_process(): void
+    {
+        $lexicon = LexLexicon::where('slug', 'fixturelex')->firstOrFail();
+        $etymon = LexEtyma::where('lexicon_id', $lexicon->id)->firstOrFail();
+        $reflex = LexReflex::whereHas('etyma', fn ($q) => $q->where('lexicon_id', $lexicon->id))->firstOrFail();
+
+        $this->get("/lexicon/fixturelex/etymon/{$etymon->id}")->assertOk();
+        $this->get("/lexicon/fixturelex/etymon/{$etymon->id}")->assertOk();
+        $this->get("/lexicon/fixturelex/word/{$reflex->id}")->assertOk();
+        $this->get("/lexicon/fixturelex/word/{$reflex->id}")->assertOk();
     }
 }

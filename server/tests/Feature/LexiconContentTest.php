@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Tests\Feature\Concerns\FixtureLexiconTestHelpers;
 use Tests\TestCase;
 
@@ -13,11 +12,6 @@ use Tests\TestCase;
  * headword rendered with its asterisk and diacritics intact, a viewer-
  * language switch producing a Telugu gloss, and a right-to-left Hebrew
  * headword rendering unmangled.
- *
- * Every test here runs in its own process (#[RunInSeparateProcess]): see
- * the FIXME in PublicRoutesSmokeTest for why -- the etymon and word pages
- * extend layouts that declare a top-level PHP function, and rendering the
- * same layout twice in one process crashes it outright.
  */
 class LexiconContentTest extends TestCase
 {
@@ -31,7 +25,6 @@ class LexiconContentTest extends TestCase
         $this->seedFixtureLexicon();
     }
 
-    #[RunInSeparateProcess]
     public function test_etymon_page_shows_the_reconstructed_headword_exactly(): void
     {
         $etymon = $this->fixtureEtymon('ph₂tḕr');
@@ -48,7 +41,6 @@ class LexiconContentTest extends TestCase
         $response->assertSee($etymon->entry, false);
     }
 
-    #[RunInSeparateProcess]
     public function test_switching_to_telugu_renders_the_telugu_gloss_on_the_word_page(): void
     {
         $reflex = $this->fixtureReflexByEntry('fæder');
@@ -64,7 +56,6 @@ class LexiconContentTest extends TestCase
         $response->assertSee('తండ్రి', false);
     }
 
-    #[RunInSeparateProcess]
     public function test_rtl_hebrew_reflex_page_renders_the_non_latin_headword(): void
     {
         $reflex = $this->fixtureReflexByEntry('אָב');
