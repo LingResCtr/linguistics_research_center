@@ -25,12 +25,30 @@ class PublicLexiconController extends Controller
 
     public function switch_lang($lexicon_slug, $lang)
     {
-        Session::put('viewer_lang_code', $lang);
-        if (request()->input('return_to')) {
-            return redirect(request()->input('return_to'));
+        $lex = LexLexicon::where('slug', $lexicon_slug)->firstOrFail();
+
+        // Only languages this lexicon offers may become the viewer language.
+        if (collect($lex->getViewerLangsArray())->contains($lang)) {
+            Session::put('viewer_lang_code', $lang);
         }
 
-        return redirect('/lexicon/'.$lexicon_slug);
+        $return_to = (string) request()->input('return_to', '');
+
+        return redirect(self::isLocalPath($return_to) ? $return_to : '/lexicon/'.$lexicon_slug);
+    }
+
+    /**
+     * A return path is honoured only when it is a path on this site: it must start
+     * with a single slash and carry no scheme or host.
+     */
+    protected static function isLocalPath(string $path): bool
+    {
+        return $path !== ''
+            && str_starts_with($path, '/')
+            && ! str_starts_with($path, '//')
+            && ! str_starts_with($path, '/\\')
+            && ! str_contains($path, "\n")
+            && ! str_contains($path, "\r");
     }
 
     public function protolanguage_home($lexicon_slug)
