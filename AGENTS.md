@@ -94,10 +94,12 @@ Defaults that encode decisions already made (see the ADRs). Deviating requires a
 
 ## 6. Tests and quality gates
 
-- Every PR that changes `server/app`, `server/routes`, `server/database` or `server/resources/views` adds or updates at least one Feature test. Smoke coverage of a public route is the minimum.
+- Tests are in proportion to risk (ADR 0011). A PR adds or updates tests when it fixes a bug (at least one test that fails without the fix), adds or changes behaviour, touches authorization, authentication, input validation or anything request input reaches, or changes a migration, the data cache, an importer or command, or a service under `server/app/Services`. A new public route gets at least a smoke test.
+- No new test is needed for wording, translation or markup-only view changes, docs, dependency updates CI already exercises, or refactors that existing tests cover. Say which applies in the PR; for a refactor, name the covering tests.
+- Test the behaviour the change adds or fixes, usually one Feature test per rule with one representative case per kind of input. Enumerate every entry point only at a security boundary. If the tests are larger than the change, say why in the PR.
 - Run `make test` and `make pint ARGS="--test <changed files>"` before opening a PR and paste a one-line summary in the PR.
 - CI (`.github/workflows/ci.yml`) must be green on blocking jobs. Non-blocking jobs are listed in ADR 0005 together with the plan to make them blocking; do not add new non-blocking jobs.
-- Do not disable, skip or delete a test to make CI pass. Fix the code or explain in the PR why the test was wrong.
+- Do not disable, skip or delete a test to make CI pass. Fix the code or explain in the PR why the test was wrong. A test may be removed with the behaviour it covers, or when another test covers the same thing; the PR names it and says why.
 
 ## 7. Git workflow in brief
 

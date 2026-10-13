@@ -11,6 +11,6 @@ Procedure:
 1. `git diff master...HEAD --stat` then the full diff. Identify which files and concerns changed.
 2. Check every hard rule in `AGENTS.md` §4 and every default in §5 against the diff. Check each ADR the change could conflict with.
 3. Look for the audit's patterns: missing `authorize()`, unvalidated input reaching a query, `request()->all()` into `update()`, inconsistent escaping, `find()` followed by property access, new inline scripts in Blade, role-name checks instead of permissions, edits to existing migrations, generated assets in the diff.
-4. Check tests exist for changed behaviour and docs were updated, including `Last verified` lines.
+4. Check the change has the tests ADR 0011 requires (a regression test for a bug fix; tests for new behaviour, authorization, input handling, migrations, the data cache, importers and services; a smoke test for a new public route). Flag tests out of proportion to the change as well as missing ones. Check docs were updated, including `Last verified` lines.
 
 Report findings ranked by severity, each with `path:line`, the rule or ADR it violates or the defect, a concrete failure scenario, and the smallest fix. Then list what you checked and found clean. Never edit files.

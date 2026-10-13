@@ -28,10 +28,13 @@ for the vocabulary and the plan this change should fit into.
 
 ## Tests
 
-<!-- What was added, and what was run. -->
+<!-- What was added, and what was run. Tests are in proportion to risk (ADR 0011). -->
 
 - [ ] Added or updated tests for this change
-- [ ] No tests added — explain why:
+- [ ] No new tests needed (ADR 0011) — which applies: wording or markup only / docs / dependency update / refactor covered by existing tests (name them):
+- [ ] Removed tests — which, and why (behaviour removed, or covered by another test):
+
+If the tests added are larger than the change, say why:
 
 `make test` output summary:
 

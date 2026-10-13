@@ -52,7 +52,7 @@ Refs: #12
 
 1. Open the PR against `master` (or `upstream` for `upstream-pr/*`, see §7). Fill in every section of the template; delete none.
 2. One concern per PR. If a refactor is needed first, send it first.
-3. Include tests for any change under `server/app`, `server/routes`, `server/database` or `server/resources/views`.
+3. Include the tests ADR 0011 calls for: a test that fails without the fix for a bug fix; tests for new or changed behaviour; tests for changes to authorization, input handling, migrations, the data cache, importers or services; a smoke test for a new public route. Wording, markup-only, docs and dependency changes, and refactors that existing tests cover, need no new test. The template's Tests section says which applies.
 4. Update documentation in the same PR: the relevant `docs/architecture` page, runbook, glossary entry, or an ADR when a decision is being made. Refresh the page's `Last verified` line.
 5. Disclose agent assistance in the PR's "Agent assistance" section: tool, model, and what you personally verified. Agent-assisted PRs are welcome; undisclosed ones are not. An agent may push the branch; a person opens the PR and merges it.
 6. Request a review from a code owner (`.github/CODEOWNERS`). Reviewers check behaviour, tests, docs, and conformance to `AGENTS.md` and the ADRs.
@@ -64,7 +64,7 @@ Reviewers approve when all of the following hold:
 
 - CI blocking jobs are green.
 - The change does what the PR says and nothing else.
-- Tests exercise the change, not just the happy path where inputs come from users.
+- Tests exercise the change, not just the happy path where inputs come from users, and are in proportion to its risk (ADR 0011): neither missing where required nor exhaustive where one case would do.
 - No hard rule in `AGENTS.md` §4 is broken.
 - Documentation matches the new behaviour.
 - For UI changes, screenshots are attached and the change targets the Filament admin or the `/lexicon` shell, not the legacy surfaces.

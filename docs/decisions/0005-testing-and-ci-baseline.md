@@ -1,6 +1,6 @@
 # 0005. Testing and CI baseline
 
-- Status: Accepted
+- Status: Accepted; decision 3 superseded by 0011
 - Date: 2026-09-16
 - Deciders: Danny Law (LRC)
 - Related: `.github/workflows/ci.yml`, `AGENTS.md` §6, review §6
