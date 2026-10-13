@@ -155,10 +155,17 @@ db-restore: ## Download a versioned dump and import it: make db-restore DUMP_URL
 	@if [ -n "$(DUMP_URL)" ]; then curl -fsSL "$(DUMP_URL)" -o $(DATA_DIR)/restore.sql && $(MAKE) db-import FILE=$(DATA_DIR)/restore.sql; else $(MAKE) db-import FILE="$(FILE)"; fi
 	$(MAKE) migrate
 
-schema-export: ## Export the current schema DDL to docs/data-model/current-schema.sql
-	$(COMPOSE) exec -T db mariadb-dump -ulrc -plrc --no-data --skip-comments --skip-add-drop-table lrc 2>/dev/null \
-	  | sed -E 's/ AUTO_INCREMENT=[0-9]+//' > docs/data-model/current-schema.sql
-	@grep -c "CREATE TABLE" docs/data-model/current-schema.sql | xargs -I{} echo "{} tables written to docs/data-model/current-schema.sql"
+# The test database is rebuilt from the migrations by `make test`; the development database usually holds
+# an imported dump, whose schema is production's rather than the migrations'.
+SCHEMA_DB ?= $(TEST_DB)
+
+schema-export: test-db ## Export the migrated schema DDL to docs/data-model/current-schema.sql (run make test first)
+	$(COMPOSE) exec -T db mariadb-dump -ulrc -plrc --no-data --skip-comments --skip-add-drop-table $(SCHEMA_DB) 2>/dev/null \
+	  | sed -E 's/ AUTO_INCREMENT=[0-9]+//' > docs/data-model/current-schema.sql.tmp
+	@n=$$(grep -c "CREATE TABLE" docs/data-model/current-schema.sql.tmp); \
+	  if [ "$$n" -eq 0 ]; then rm -f docs/data-model/current-schema.sql.tmp; echo "No tables in $(SCHEMA_DB); run make test first." >&2; exit 1; fi; \
+	  mv docs/data-model/current-schema.sql.tmp docs/data-model/current-schema.sql; \
+	  echo "$$n tables written to docs/data-model/current-schema.sql"
 
 lexicon-cache: ## Rebuild the public data cache for one lexicon: make lexicon-cache ID=1
 	@test -n "$(ID)" || { echo "Usage: make lexicon-cache ID=<lexicon_id>"; exit 1; }

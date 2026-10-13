@@ -1,6 +1,6 @@
 # Data model
 
-Last verified: 2026-09-16 against commit c0fde76.
+Last verified: 2026-10-13 against commit f24dd17.
 
 This directory is the **declared source of truth for the database schema** (ADR 0009). Laravel migrations and Eloquent models implement what is specified here; they do not define it. Agents and contributors read the schema from here rather than inferring it from whichever model file they open first. When this directory and the code disagree, one of them is wrong, and the PR that notices says which.
 
@@ -23,10 +23,11 @@ For the meaning of the current tables see [`../architecture/domain-model.md`](..
 
 ## Regenerating `current-schema.sql`
 
-With the local stack running and migrated:
+With the local stack running:
 
 ```bash
+make test
 make schema-export
 ```
 
-This runs `mariadb-dump --no-data` against the local `db` service, strips auto-increment counters, and writes the file here. Commit it in the same PR as the migration that changed it.
+`make test` rebuilds the `lrc_test` database from the migrations; `make schema-export` then runs `mariadb-dump --no-data` against it, strips auto-increment counters, and writes the file here. It exports `lrc_test` rather than the development database because `lrc` usually holds an imported production dump, whose schema is production's, not the migrations'. Pass `SCHEMA_DB=<name>` to export another database. Commit the file in the same PR as the migration that changed it.

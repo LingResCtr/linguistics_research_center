@@ -59,9 +59,9 @@ The lesson-series model backing the "Early Indo-European Online" language-learni
 | `EieolLesson` | `eieol_lesson` | One lesson within a series | `belongsTo` `series`, `language`; `hasMany` `grammars`, `glossed_texts` | — |
 | `EieolGrammar` | `eieol_grammar` | A grammar-note section within a lesson | `belongsTo` `lesson` | — |
 | `EieolGlossedText` | `eieol_glossed_text` | An interlinear-glossed text passage within a lesson | `belongsTo` `lesson`; `hasMany` `glosses` | — |
-| `EieolGloss` | `eieol_gloss` | One glossed word/phrase within a glossed text | `belongsTo` `glossed_text`, `language`; `hasMany` `elements` | — |
+| `EieolGloss` | `eieol_gloss` | One glossed word/phrase within a glossed text. In the `/admin2` lesson editor, detaching a gloss or deleting its glossed text keeps the gloss with `glossed_text_id` and `order` NULL, so it can still be found and copied. Deleting a lesson (for example from Filament) cascades instead, removing its glossed texts, their glosses and the glosses' elements | `belongsTo` `glossed_text` (nullable), `language`; `hasMany` `elements` | — |
 | `EieolElement` | `eieol_element` | A morphological element (analysis) within a gloss, pointing at a head word | `belongsTo` `gloss`, `head_word` | — |
-| `EieolHeadWord` | `eieol_head_word` | A dictionary head word used across glosses | `hasMany` `elements`; `belongsTo` `language`, and `belongsTo` `LexEtyma` (the bridge into the Lexicon cluster) | — |
+| `EieolHeadWord` | `eieol_head_word` | A dictionary head word used across glosses | `hasMany` `elements`; `belongsTo` `language`, and `belongsTo` `LexEtyma` (the bridge into the Lexicon cluster; `etyma_id` NULL when the head word has no etymon) | — |
 | `EieolLanguage` | `eieol_language` | A language used within EIEOL (distinct from `LexLanguage`) | referenced by `EieolLesson`, `EieolGloss`, `EieolHeadWord` | — |
 | `EieolSeriesLanguage` | `eieol_series_language` | Languages associated with a series, for display | `belongsTo` `series`; no timestamps | — |
 | `IsoLanguage` | `iso_language` | ISO 639 language code lookup used only by the legacy series editor | none declared | — |
@@ -73,7 +73,7 @@ erDiagram
     EieolLesson ||--o{ EieolGrammar : "has"
     EieolLesson ||--o{ EieolGlossedText : "has"
     EieolLesson }o--|| EieolLanguage : "language"
-    EieolGlossedText ||--o{ EieolGloss : "has"
+    EieolGlossedText |o--o{ EieolGloss : "has"
     EieolGloss ||--o{ EieolElement : "has"
     EieolGloss }o--|| EieolLanguage : "language"
     EieolElement }o--|| EieolHeadWord : "head_word"
